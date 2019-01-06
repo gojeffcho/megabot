@@ -11,7 +11,7 @@ CONFIG = {}
 
 CONFIG['Prefix'] = ('!')
 
-CONFIG['ChannelRoles']  = [ 'artists', 'directors', 'developers',
+CONFIG['GameDevRoles']  = [ 'artists', 'directors', 'developers',
                             'musicians', 'producers', 'writers']
 CONFIG['CourseRoles']   = [ 'cmput-general', 'gamedev-general' ] + current_courses
 

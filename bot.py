@@ -14,6 +14,7 @@ async def on_ready():
 
   print('Logged on as {0.user}.'.format(megabot))
 
+
 @megabot.event
 async def on_member_join(member):
   welcome_channel = find_channel(member.guild, CONFIG['WelcomeChannel'])
@@ -38,12 +39,12 @@ async def agree(ctx):
   is_new = user_has_role(member, CONFIG['NewRole'])
   new_role = find_role(ctx.guild, CONFIG['NewRole'])
   confirmed_role = find_role(ctx.guild, CONFIG['ConfirmedRole'])
-  notifications_channel = find_channel(ctx.guild, CONFIG['NotificationsChannel'])
   profiles_channel = find_channel(ctx.guild, CONFIG['ProfilesChannel'])
 
   if is_new and CONFIG['WelcomeChannel'] in ctx.message.channel.name:
     await member.remove_roles(new_role)
-    await send_notification(ctx.guild, 'Please welcome our newest member {0} to the Megachannel!'.format(member.name))
+    await send_notification(ctx.guild,
+                            'Please welcome our newest member {0} to the Megachannel!'.format(member.mention))
     await member.send('You have agreed to the rules of the Megachannel! Please make sure you check back often ' +
                       'to keep up-to-date with changes.' +
                       '\n\nYou can now use any publicly-available channel; for example, you don\'t have to ' +
@@ -59,16 +60,140 @@ async def agree(ctx):
   else:
     await member.send('You have already agreed to the rules on this server.')
 
+@megabot.command()
+async def cap(ctx, mention, reason):
+  pass # TODO
 
-# Command: help
 
-# Command: reset all to confirmed
+@megabot.command()
+async def course(ctx, course):
+  """Add a course role to yourself so you can be mentioned by the role.
 
-# Command: add course or role
+  Args:
+    course (String)
+      See !courses for a list of current courses.
 
-# Command: get profile
+  Returns:
+    None
+  """
+  if course not in CONFIG['CourseRoles']:
+    await ctx.send("`!course`: `{}` is not an active course role.".format(course))
+    return
 
-# Command: admin setname
+  course_role = find_role(ctx.guild, course)
+  if not course_role:
+    await ctx.send("`!course`: `{}` could not be found. Please check the spelling and punctuation.".format(course))
+
+  if course_role in ctx.author.roles:
+    await ctx.author.remove_roles(course_role)
+    await send_notification(ctx.guild, "{} has removed themselves from `{}`.".format(ctx.author.mention, course_role))
+  else:
+    await ctx.author.add_roles(course_role)
+    await send_notification(ctx.guild, "{} has added themselves to `{}`.".format(ctx.author.mention, course_role))
+    await ctx.author.send('The course {0} was added. You will now be notified '.format(course_role) +
+                          'when someone mentions `@{0}`.'.format(course_role))
+
+
+@megabot.command()
+async def courses(ctx):
+  """List the current courses a user can add."""
+
+  course_list = ''
+
+  for course in CONFIG['CourseRoles']:
+    course_list += '\n  * `{}`'.format(course)
+
+  await ctx.author.send('The current courses you can add are: ' + course_list)
+
+
+@megabot.command()
+async def echo(ctx, message):
+  """Admin command: make the bot say something.
+
+  Args:
+    message (String)
+      The string to be said by the bot.
+
+  Returns:
+    None
+  """
+  if is_admin(ctx.author):
+    await ctx.send(message)
+
+
+@megabot.command()
+async def nick(ctx, name):
+  """Change your nickname on this server.
+
+  Args:
+    name (String)
+      String that you want the nickname set to - must be wrapped in
+      quotation marks if longer than one word.
+
+  Returns:
+    None
+  """
+  old_name = ctx.author.name
+  await ctx.author.edit(nick = name)
+  await send_notification(ctx.guild, "{} updated their nickname to {}!".format(old_name, name))
+
+
+@megabot.command()
+async def profile(ctx, mention):
+  pass # TODO
+
+@megabot.command()
+async def reset(ctx):
+  pass # TODO
+
+
+@megabot.command()
+async def role(ctx, role):
+  """Add a game development role to yourself so you can be mentioned by the role.
+
+  Args:
+    role (String)
+      See !roles for a list of current roles.
+
+  Returns:
+    None
+  """
+
+  if role == 'programmers':
+    role = 'developers'
+
+  if role not in CONFIG['GameDevRoles']:
+    await ctx.send("`!role`: `{}` is not an active game development role.".format(role))
+    return
+
+  gamedev_role = find_role(ctx.guild, role)
+  if not gamedev_role:
+    await ctx.send("`!role`: `{}` could not be found. Please check the spelling and punctuation.".format(role))
+
+  if gamedev_role in ctx.author.roles:
+    await ctx.author.remove_roles(gamedev_role)
+    await send_notification(ctx.guild, "{} has removed themselves from `{}`.".format(
+                                                    ctx.author.mention, gamedev_role))
+  else:
+    await ctx.author.add_roles(gamedev_role)
+    await send_notification(ctx.guild, "{} has added themselves to `{}`.".format(
+                                                ctx.author.mention, gamedev_role))
+    await ctx.author.send('The {0} role was added. You will now be notified '.format(gamedev_role) +
+                          'when someone mentions `@{0}`.'.format(gamedev_role))
+
+
+@megabot.command()
+async def roles(ctx):
+  """List the current roles a user can add."""
+
+  role_list = ''
+
+  for role in CONFIG['GameDevRoles']:
+    role_list += '\n  * `{}`'.format(role)
+
+  await ctx.author.send('The current roles you can add are: ' + role_list)
+
+
 @megabot.command()
 async def setname(ctx, user, name):
   """Admin command: change a user's nickname on this server.
@@ -97,42 +222,9 @@ async def setname(ctx, user, name):
     await ctx.send("`!setname`: You do not have the privileges to use this command.")
 
 
-# Command: user setname
 @megabot.command()
-async def nick(ctx, name):
-  """Change your nickname on this server.
-
-  Args:
-    name (String)
-      String that you want the nickname set to - must be wrapped in
-      quotation marks if longer than one word.
-
-  Returns:
-    None
-  """
-  old_name = ctx.author.name
-  await ctx.author.edit(nick = name)
-  await send_notification(ctx.guild, "{} updated their nickname to {}!".format(old_name, name))
-
-
-# Command: cap
-
-# Command: uncap
-
-@megabot.command()
-async def echo(ctx, message):
-  """Admin command: make the bot say something.
-
-  Args:
-    message (String)
-      The string to be said by the bot.
-
-  Returns:
-    None
-  """
-  if is_admin(ctx.author):
-    await ctx.send(message)
-
+async def uncap(ctx, mention):
+  pass # TODO
 
 
 

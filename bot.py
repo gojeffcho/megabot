@@ -1,5 +1,6 @@
-import discord
 from discord.ext.commands import Bot
+import random
+
 from config import CONFIG
 from secure import SECURE
 from utility import is_admin, is_mod, find_channel, \
@@ -12,6 +13,7 @@ megabot = Bot(command_prefix = CONFIG['Prefix'])
 async def on_ready():
   """Logs connection message for the Megabot."""
 
+  random.seed()
   print('Logged on as {0.user}.'.format(megabot))
 
 
@@ -59,6 +61,7 @@ async def agree(ctx):
     await member.add_roles(confirmed_role)
   else:
     await member.send('You have already agreed to the rules on this server.')
+
 
 @megabot.command()
 async def cap(ctx, mention, reason):
@@ -140,11 +143,48 @@ async def nick(ctx, name):
 
 @megabot.command()
 async def profile(ctx, mention):
-  pass # TODO
+  """Look up a user's profile, if they have made a post in #profiles.
+
+  Args:
+    mention (String: user mention)
+      The user's profile to look up.
+
+  Returns:
+    None
+  """
+  if user_has_role(ctx.author, CONFIG['ConfirmedRole']):
+    if len(ctx.message.mentions) < 1 or len(ctx.message.mentions) > 1:
+      await ctx.author.send('`!profile`: You must mention one user whose profile you wish to look up.')
+      return
+
+    target_user = ctx.message.mentions[0]
+    profiles_channel = find_channel(ctx.guild, CONFIG['ProfilesChannel'])
+    profile = None
+
+    async for message in profiles_channel.history(limit = 100 + len(ctx.guild.members)):
+      if message.author == target_user:
+        profile = message
+        await ctx.send('You can find {}\'s profile at: {}'.format(target_user.name, message.jump_url))
+        return
+
+    if not profile:
+      await ctx.send('{} has not yet posted to {}.'.format(target_user.name, profiles_channel.mention))
+
+  else:
+    ctx.author.send('You must agree to the rules to view any profiles.')
+
 
 @megabot.command()
 async def reset(ctx):
-  pass # TODO
+  """Reset your courses, roles, and permissions back to defaults."""
+
+  if user_has_role(ctx.author, CONFIG['ConfirmedRole']):
+    for role in ctx.author.roles:
+      if role.name != '@everyone' and role.name != CONFIG['ConfirmedRole'] and role.name != CONFIG['ModRole']:
+        await ctx.author.remove_roles(role)
+
+  await ctx.author.send('Your permissions to the server have been reset. ' +
+                        'Please add back any roles and courses you want on your profile.')
 
 
 @megabot.command()
@@ -192,6 +232,48 @@ async def roles(ctx):
     role_list += '\n  * `{}`'.format(role)
 
   await ctx.author.send('The current roles you can add are: ' + role_list)
+
+
+@megabot.command()
+async def roll(ctx, dice):
+  """Roll a die in the format #d#.
+
+  Args:
+    dice (String)
+      String of format #d#, e.g. 3d6, to roll a d6 three times.
+
+  Returns:
+    result (Int)
+    The result of rolling the dice.
+  """
+  dice_available = [2, 4, 6, 8, 10, 12, 20, 100, 1000]
+  args = dice.split('d')
+
+  if len(args) != 2:
+    await ctx.send('`!roll`: Please check your dice syntax.')
+    return
+
+  if not args[0].isdigit() or not args[1].isdigit():
+    await ctx.send('`!roll`: Please check your dice syntax. It must be of the format #d#, e.g. `!roll 3d6`.')
+    return
+
+  num_dice = int(args[0])
+  die_type = int(args[1])
+
+  if die_type not in dice_available:
+    dice_output = ['d{}'.format(die) for die in dice_available]
+
+    await ctx.send('`!roll`: Dice must be one of: ' + ', '.join(dice_output))
+    return
+
+  if num_dice < 1:
+    await ctx.send('`!roll`: The first number must be >= 1.')
+
+  roll_total = 0
+  for i in range(num_dice):
+    roll_total += random.randint(1, die_type)
+
+  await ctx.send('{} rolls {} and gets... {}!'.format(ctx.author.mention, dice, roll_total))
 
 
 @megabot.command()

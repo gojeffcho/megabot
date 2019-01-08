@@ -213,7 +213,7 @@ async def invite(ctx, discord_user, *, desc):
     None
   """
   user = discord_user.split('#')
-  if not len(user) == 3:
+  if not len(user) == 2:
     await ctx.send('`!invite`: You must enter the full Discord username ' +
              'including tag number (e.g. Cipherkey#1762).')
     return

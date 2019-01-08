@@ -247,35 +247,6 @@ async def nick(ctx, *, name):
 
 
 @megabot.command()
-async def postcount(ctx):
-  """Mod command: Get the top posters for the server."""
-
-  if is_admin(ctx.author) or is_mod(ctx.author):
-
-    members = ctx.guild.members
-    count = {}
-
-    for member in members:
-      await ctx.send('Getting data for {}'.format(member.nick)) # DEBUG
-      messages = await member.history(limit=None).flatten()
-      count[member] = len(messages)
-      await ctx.send('{} had {} posts.'.format(member.nick, count[member])) # DEBUG
-
-    sorted_members = sorted(count.items(), key=lambda kv: kv[1])[:10]
-
-    output_members = ['\n * {}: {}'.format(k, v) for k, v in sorted_members]
-
-    await ctx.send(output_members) # DEBUG
-
-    await ctx.send('The top posters to date are: {}'.format(''.join(output_members)))
-
-
-  else:
-
-    await ctx.send('`!postcount`: Only a mod or admin may use this command.')
-
-
-@megabot.command()
 async def profile(ctx, mention):
   """Look up a user's profile, if they have made a post in #profiles.
 

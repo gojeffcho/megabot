@@ -74,14 +74,14 @@ async def cap(ctx, mention):
   Returns:
     None
   """
+  if len(ctx.message.mentions) == 0:
+    await ctx.send("`!cap`: The user to be capped must be @-mentioned as the first argument.")
+    return
+
   target_user = ctx.message.mentions[0]
   cap_role = find_role(ctx.guild, CONFIG['CapRole'])
   staff_channel = find_channel(ctx.guild, CONFIG['StaffChannel'])
   notifications_channel = find_channel(ctx.guild, CONFIG['NotificationsChannel'])
-
-  if len(ctx.message.mentions) == 0:
-    await ctx.send("`!cap`: The user to be capped must be @-mentioned as the first argument.")
-    return
 
   if not cap_role:
     await ctx.send('`!cap`: There was an error attempting to cap {}.'.format(target_user.mention))
@@ -99,7 +99,7 @@ async def cap(ctx, mention):
 
   if is_admin(ctx.author) or is_mod(ctx.author):
 
-    if cap_role in target_user.roles:
+    if user_has_role(target_user, CONFIG['CapRole']):
       await ctx.send('{} is already capped!'.format(target_user.mention))
 
     else:
@@ -111,8 +111,7 @@ async def cap(ctx, mention):
                              'after a certain amount of time.')
       await staff_channel.send('{} has been dunce capped by {} for {}!'.format(
                                                                           target_user.mention,
-                                                                          ctx.author.mention,
-                                                                          reason))
+                                                                          ctx.author.mention))
       await notifications_channel.send('{} has been dunce capped by {}!'.format(
                                                                           target_user,
                                                                           ctx.author))

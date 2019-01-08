@@ -46,7 +46,8 @@ async def on_command_error(ctx, e):
   Returns:
     None
   """
-  await ctx.send('Error: {}'.format(e))
+  await ctx.send('Error: {} Please use `!help` to list available commands '.format(e) +
+                 'and `!help <command>` to see the complete docstring.')
 
 
 @megabot.command()

@@ -212,12 +212,13 @@ async def invite(ctx, discord_user, *, desc):
   Returns:
     None
   """
-  if '#' not in discord_user:
+  user = discord_user.split('#')
+  if not len(user) == 3:
     await ctx.send('`!invite`: You must enter the full Discord username ' +
              'including tag number (e.g. Cipherkey#1762).')
     return
 
-  if not len(desc) > 1:
+  if not len(desc.split()) > 1:
     await ctx.send('`!invite`: You must enclose your description in quotation '
              'marks (e.g. "Jeff Cho, 4th year CS student, in Game Dev ' +
              'Certificate program, <additional description>...").')

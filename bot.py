@@ -103,7 +103,7 @@ async def cap(ctx, mention, reason):
   if is_admin(ctx.author) or is_mod(ctx.author):
 
     if cap_role in target_user.roles:
-      ctx.send('{} is already capped!'.format(target_user.mention))
+      await ctx.send('{} is already capped!'.format(target_user.mention))
 
     else:
       await target_user.add_roles(cap_role)

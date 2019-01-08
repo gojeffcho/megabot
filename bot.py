@@ -223,7 +223,7 @@ async def invite(ctx, discord_user, *, desc):
              'Certificate program, <additional description>...").')
     return
 
-  admin_user = ctx.guild.get_member(CONFIG['AdminUser'])
+  admin_user = ctx.guild.owner
   await admin_user.send('{} has requested an invite for {}: {}'.format(
                                     ctx.author.name, discord_user, desc))
 

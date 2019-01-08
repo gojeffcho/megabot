@@ -65,7 +65,65 @@ async def agree(ctx):
 
 @megabot.command()
 async def cap(ctx, mention, reason):
-  pass # TODO
+  """Mod command: Dunce cap a mentioned user.
+
+  Args:
+    mention (User)
+      The user to cap.
+
+    reason (String, optional)
+      Specify an optional reason.
+
+  Returns:
+    None
+  """
+  target_user = ctx.message.mentions[0]
+  cap_role = find_role(ctx.guild, CONFIG['CapRole'])
+  staff_channel = find_channel(ctx.guild, CONFIG['StaffChannel'])
+  notifications_channel = find_channel(ctx.guild, CONFIG['NotificationsChannel'])
+
+  if len(ctx.message.mentions) == 0:
+    await ctx.send("`!cap`: The user to be capped must be @-mentioned as the first argument.")
+    return
+
+  if not cap_role:
+    await ctx.send('`!cap`: There was an error attempting to cap {}.'.format(target_user.mention))
+    return
+
+  if is_admin(target_user):
+    await ctx.author.send('You have been dunce capped for attempting to dunce cap the admin. ' +
+                          'While you are dunce capped, you will not be able to send messages, ' +
+                          'but you will be able to add reactions to other users\' messages. ' +
+                          'Your dunce cap will be removed after a certain amount of time.')
+    await ctx.send('{} has been capped for trying to cap {} - hoisted by your own petard!'.format(
+                                                          ctx.author.mention, target_user.mention))
+    await staff_channel.send('{} has been capped for attempting to cap {}!'.format(
+                                          ctx.author.mention, target_user.mention))
+
+  if is_admin(ctx.author) or is_mod(ctx.author):
+
+    if cap_role in target_user.roles:
+      ctx.send('{} is already capped!'.format(target_user.mention))
+
+    else:
+      await target_user.add_roles(cap_role)
+      await target_user.send('You have been dunce capped for violating a rule. While you are ' +
+                             'dunce capped, you will not be able to send messages, but you will ' +
+                             'be able to add reactions to other users\' messages. The offending ' +
+                             'violation must be remediated, and your dunce cap will be removed ' +
+                             'after a certain amount of time.')
+      await staff_channel.send('{} has been dunce capped by {} for {}!'.format(
+                                                                          target_user.mention,
+                                                                          ctx.author.mention,
+                                                                          reason))
+      await notifications_channel.send('{} has been dunce capped by {}!'.format(
+                                                                          target_user,
+                                                                          ctx.author))
+
+
+
+  else:
+    await ctx.send('`!cap`: You are not worthy to wield the mighty cap.')
 
 
 @megabot.command()
@@ -121,6 +179,7 @@ async def echo(ctx, message):
     None
   """
   if is_admin(ctx.author):
+    await ctx.message.delete()
     await ctx.send(message)
 
 
@@ -137,7 +196,7 @@ async def nick(ctx, name):
     None
   """
   old_name = ctx.author.name
-  await ctx.author.edit(nick = name)
+  await ctx.author.edit(nick=name)
   await send_notification(ctx.guild, "{} updated their nickname to {}!".format(old_name, name))
 
 
@@ -246,7 +305,11 @@ async def roll(ctx, dice):
     result (Int)
     The result of rolling the dice.
   """
-  dice_available = [2, 4, 6, 8, 10, 12, 20, 100, 1000]
+  if not dice:
+    await ctx.send('`!roll`: You have not specified the dice to roll.')
+    return
+
+  dice_available = CONFIG['Dice']
   args = dice.split('d')
 
   if len(args) != 2:
@@ -278,7 +341,7 @@ async def roll(ctx, dice):
 
 @megabot.command()
 async def setname(ctx, user, name):
-  """Admin command: change a user's nickname on this server.
+  """Mod command: change a user's nickname on this server.
 
   Args:
     user (Member):

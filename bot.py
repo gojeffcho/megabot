@@ -124,6 +124,7 @@ async def cap(ctx, mention):
 
     else:
       await target_user.add_roles(cap_role)
+      await ctx.send('WEE WOO WEE WOO')
       await target_user.send('You have been dunce capped for violating a rule. While you are ' +
                              'dunce capped, you will not be able to send messages, but you will ' +
                              'be able to add reactions to other users\' messages. The offending ' +

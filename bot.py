@@ -219,8 +219,8 @@ async def invite(ctx, discord_user, *, desc):
     return
 
   if not len(desc.split()) > 1:
-    await ctx.send('`!invite`: You must enclose your description in quotation '
-             'marks (e.g. "Jeff Cho, 4th year CS student, in Game Dev ' +
+    await ctx.send('`!invite`: Your description requires more detail '
+             '(e.g. "Jeff Cho, 4th year CS student, in Game Dev ' +
              'Certificate program, <additional description>...").')
     return
 

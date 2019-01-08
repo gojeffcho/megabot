@@ -255,13 +255,19 @@ async def postcount(ctx):
     members = ctx.guild.members
     count = {}
 
+    await ctx.send(ctx.guild.members) # DEBUG
+
     for member in members:
+      await ctx.send('Getting data for {}'.format(member.nick)) # DEBUG
       messages = await member.history(limit=None).flatten()
       count[member] = len(messages)
+      await ctx.send('{} had {} posts.'.format(member.nick, count[member])) # DEBUG
 
     sorted_members = sorted(count.items(), key=lambda kv: kv[1])[:10]
 
     output_members = ['\n * {}: {}'.format(k, v) for k, v in sorted_members]
+
+    await ctx.send(output_members) # DEBUG
 
     await ctx.send('The top posters to date are: {}'.format(''.join(output_members)))
 

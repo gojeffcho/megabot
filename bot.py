@@ -231,13 +231,12 @@ async def invite(ctx, discord_user, *, desc):
 
 
 @megabot.command()
-async def nick(ctx, name):
+async def nick(ctx, *, name):
   """Change your nickname on this server.
 
   Args:
     name (String)
-      String that you want the nickname set to - must be wrapped in
-      quotation marks if longer than one word.
+      String to which you want your nickname set.
 
   Returns:
     None
@@ -245,6 +244,31 @@ async def nick(ctx, name):
   old_name = ctx.author.nick
   await ctx.author.edit(nick=name)
   await send_notification(ctx.guild, "{} updated their nickname to {}!".format(old_name, name))
+
+
+@megabot.command()
+async def postcount(ctx):
+  """Mod command: Get the top posters for the server."""
+
+  if is_admin(ctx.author) or is_mod(ctx.author):
+
+    members = ctx.guild.members
+    count = {}
+
+    for member in members:
+      messages = await member.history(limit=None).flatten()
+      count[member] = len(messages)
+
+    sorted_members = sorted(count.items(), key=lambda kv: kv[1])[:10]
+
+    output_members = ['\n * {}: {}'.format(k, v) for k, v in sorted_members]
+
+    ctx.send('The top posters to date are: {}'.format(''.join(output_members)))
+
+
+  else:
+
+    await ctx.send('`!postcount`: Only a mod or admin may use this command.')
 
 
 @megabot.command()
@@ -387,7 +411,7 @@ async def roll(ctx, dice):
 
 
 @megabot.command()
-async def setname(ctx, user, name):
+async def setname(ctx, user, *, name):
   """Mod command: change a user's nickname on this server.
 
   Args:
@@ -395,8 +419,7 @@ async def setname(ctx, user, name):
       The user whose nickname will be updated.
 
     name (String):
-      String to set the user's nickname to - must be wrapped in
-      quotation marks if longer than one word.
+      String to which to set the user's nickname.
   """
   if is_admin(ctx.author) or is_mod(ctx.author):
 

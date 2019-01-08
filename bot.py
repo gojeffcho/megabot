@@ -255,8 +255,6 @@ async def postcount(ctx):
     members = ctx.guild.members
     count = {}
 
-    await ctx.send(ctx.guild.members) # DEBUG
-
     for member in members:
       await ctx.send('Getting data for {}'.format(member.nick)) # DEBUG
       messages = await member.history(limit=None).flatten()

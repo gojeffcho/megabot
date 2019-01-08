@@ -263,7 +263,7 @@ async def postcount(ctx):
 
     output_members = ['\n * {}: {}'.format(k, v) for k, v in sorted_members]
 
-    ctx.send('The top posters to date are: {}'.format(''.join(output_members)))
+    await ctx.send('The top posters to date are: {}'.format(''.join(output_members)))
 
 
   else:

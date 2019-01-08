@@ -64,15 +64,12 @@ async def agree(ctx):
 
 
 @megabot.command()
-async def cap(ctx, mention, reason):
+async def cap(ctx, mention):
   """Mod command: Dunce cap a mentioned user.
 
   Args:
     mention (User)
       The user to cap.
-
-    reason (String, optional)
-      Specify an optional reason.
 
   Returns:
     None

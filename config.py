@@ -15,6 +15,7 @@ CONFIG['GameDevRoles']  = [ 'artists', 'directors', 'developers',
                             'musicians', 'producers', 'writers']
 CONFIG['CourseRoles']   = [ 'cmput-general', 'gamedev-general' ] + current_courses
 
+CONFIG['AdminUser']     = 'Cipherkey#1762'
 CONFIG['AdminRole']     = 'Daddy'
 CONFIG['ModRole']       = 'Sugar Babies'
 CONFIG['CapRole']       = 'Dunce Cap'

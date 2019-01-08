@@ -87,6 +87,7 @@ async def cap(ctx, mention):
     await ctx.send('`!cap`: There was an error attempting to cap {}.'.format(target_user.mention))
     return
 
+  # Attempt to cap the Admin
   if is_admin(target_user):
     await ctx.author.send('You have been dunce capped for attempting to dunce cap the admin. ' +
                           'While you are dunce capped, you will not be able to send messages, ' +
@@ -98,10 +99,11 @@ async def cap(ctx, mention):
                                           ctx.author.mention, target_user.mention))
     return
 
+  # Moderator uses !cap
   if is_admin(ctx.author) or is_mod(ctx.author):
 
     if user_has_role(target_user, CONFIG['CapRole']):
-      await ctx.send('{} is already capped!'.format(target_user.mention))
+      await ctx.send('`!cap`: {} is already capped!'.format(target_user.mention))
 
     else:
       await target_user.add_roles(cap_role)
@@ -118,6 +120,7 @@ async def cap(ctx, mention):
                                                                           ctx.author.name))
       return
 
+  # Non-moderator uses !cap
   else:
     await ctx.send('`!cap`: You are not worthy to wield the mighty cap.')
 
@@ -177,6 +180,38 @@ async def echo(ctx, message):
   if is_admin(ctx.author):
     await ctx.message.delete()
     await ctx.send(message)
+
+@megabot.command()
+async def invite(ctx, discord_user, desc):
+  """Request an invite link for a new user.
+
+  Args:
+    discord_user (String)
+      The full Discord username (with tag number) you wish to invite.
+
+    desc (String)
+      Quick introduction to the person, why you want to invite them,
+      and whether they are in the Game Development Certificate. The
+      entire desc must be enclosed in quotation marks, otherwise
+      only the first word will come through.
+
+  Returns:
+    None
+  """
+  if '#' not in discord_user:
+    await ctx.send('`!invite`: You must enter the full Discord username ' +
+             'including tag number (e.g. Cipherkey#1762).')
+    return
+
+  if not len(desc) > 1:
+    await ctx.send('`!invite`: You must enclose your description in quotation '
+             'marks (e.g. "Jeff Cho, 4th year CS student, in Game Dev ' +
+             'Certificate program, <additional description>...").')
+    return
+
+  admin_user = ctx.guild.get_member(CONFIG['AdminUser'])
+  await admin_user.send('{} has requested an invite for {}: {}'.format(
+                                    ctx.author.name, discord_user, desc))
 
 
 @megabot.command()
@@ -365,7 +400,54 @@ async def setname(ctx, user, name):
 
 @megabot.command()
 async def uncap(ctx, mention):
-  pass # TODO
+  """Mod command: Remove the dunce cap from a mentioned user.
+
+    Args:
+      mention (User)
+        The user to uncap.
+
+    Returns:
+      None
+  """
+  if len(ctx.message.mentions) == 0:
+    await ctx.send("`!uncap`: The user to be uncapped must be @-mentioned as the first argument.")
+    return
+
+  target_user = ctx.message.mentions[0]
+  cap_role = find_role(ctx.guild, CONFIG['CapRole'])
+  staff_channel = find_channel(ctx.guild, CONFIG['StaffChannel'])
+  notifications_channel = find_channel(ctx.guild, CONFIG['NotificationsChannel'])
+
+  if not cap_role:
+    await ctx.send('`!uncap`: There was an error attempting to uncap {}.'.format(target_user.mention))
+    return
+
+  # Moderator uses !cap
+  if is_admin(ctx.author) or is_mod(ctx.author):
+
+    if not user_has_role(target_user, CONFIG['CapRole']):
+      await ctx.send('Are you blind, {}? You can\'t uncap {} '.format(ctx.author.mention) +
+                     'if they\'re not wearing the Dunce Cap!')
+
+    else:
+      await target_user.remove_roles(cap_role)
+      await target_user.send('Your dunce cap is lifted.')
+      await staff_channel.send('{} has been uncapped by {}!'.format(
+                                                                target_user.mention,
+                                                                ctx.author.mention))
+      await notifications_channel.send('{} has been uncapped by {}!'.format(
+                                                                target_user.name,
+                                                                ctx.author.name))
+      return
+
+  else:
+
+    # Non-moderator attempts to use !uncap
+    if not user_has_role(target_user, CONFIG['CapRole']):
+      await ctx.send('`!uncap`: How can you uncap someone who ' +
+                     'isn\'t wearing a cap to begin with? Reconsider your life choices.')
+    else:
+      await ctx.send('`!uncap`: You are not strong enough to discard the mighty cap.')
 
 
 

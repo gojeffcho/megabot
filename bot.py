@@ -426,7 +426,7 @@ async def uncap(ctx, mention):
   if is_admin(ctx.author) or is_mod(ctx.author):
 
     if not user_has_role(target_user, CONFIG['CapRole']):
-      await ctx.send('Are you blind, {}? You can\'t uncap {} '.format(ctx.author.mention) +
+      await ctx.send('Are you blind, {}? You can\'t uncap {} '.format(ctx.author.mention, target_user.name) +
                      'if they\'re not wearing the Dunce Cap!')
 
     else:

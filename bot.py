@@ -32,6 +32,22 @@ async def on_member_join(member):
                               'all the regular channels on the server!')
 
 
+@megabot.event
+async def on_command_error(ctx, e):
+  """Command error handler.
+
+  Args:
+    ctx (Context)
+      Context of the Exception.
+
+    e (Exception)
+      Exception object.
+
+  Returns:
+    None
+  """
+  await ctx.send(e)
+
 
 @megabot.command()
 async def agree(ctx):
@@ -182,7 +198,7 @@ async def echo(ctx, message):
     await ctx.send(message)
 
 @megabot.command()
-async def invite(ctx, discord_user, desc):
+async def invite(ctx, discord_user, *, desc):
   """Request an invite link for a new user.
 
   Args:
@@ -191,9 +207,7 @@ async def invite(ctx, discord_user, desc):
 
     desc (String)
       Quick introduction to the person, why you want to invite them,
-      and whether they are in the Game Development Certificate. The
-      entire desc must be enclosed in quotation marks, otherwise
-      only the first word will come through.
+      and whether they are in the Game Development Certificate.
 
   Returns:
     None
@@ -444,8 +458,8 @@ async def uncap(ctx, mention):
 
     # Non-moderator attempts to use !uncap
     if not user_has_role(target_user, CONFIG['CapRole']):
-      await ctx.send('`!uncap`: How can you uncap someone who ' +
-                     'isn\'t wearing a cap to begin with? Reconsider your life choices.')
+      await ctx.send('`!uncap`: How can you uncap someone who isn\'t ' +
+                     'wearing a cap to begin with? Reconsider your life choices.')
     else:
       await ctx.send('`!uncap`: You are not strong enough to discard the mighty cap.')
 

@@ -25,7 +25,7 @@ async def on_member_join(member):
   new_role = find_role(member.guild, CONFIG['NewRole'])
 
   await member.add_roles(new_role)
-  await welcome_channel.send( 'Hello and welcome to the Megachannel, {0}! '.format(member.nick) +
+  await welcome_channel.send( 'Hello and welcome to the Megachannel, {0}! '.format(member.display_name) +
                               'Please make sure you read the {0} first '.format(rules_channel.mention) +
                               '- they\'re short, simple, and easy to follow. ' +
                               'Once you have read and agreed to the rules, you will have access to ' +
@@ -133,8 +133,8 @@ async def cap(ctx, mention):
                                                                           target_user.mention,
                                                                           ctx.author.mention))
       await notifications_channel.send('{} has been dunce capped by {}!'.format(
-                                                                          target_user.nick,
-                                                                          ctx.author.nick))
+                                                                          target_user.display_name,
+                                                                          ctx.author.display_name))
       return
 
   # Non-moderator uses !cap
@@ -227,7 +227,7 @@ async def invite(ctx, discord_user, *, desc):
 
   admin_user = ctx.guild.owner
   await admin_user.send('{} has requested an invite for {}: {}'.format(
-                                    ctx.author.nick, discord_user, desc))
+                                    ctx.author.display_name, discord_user, desc))
 
 
 @megabot.command()
@@ -241,7 +241,7 @@ async def nick(ctx, *, name):
   Returns:
     None
   """
-  old_name = ctx.author.nick
+  old_name = ctx.author.display_name
   await ctx.author.edit(nick=name)
   await send_notification(ctx.guild, "{} updated their nickname to {}!".format(old_name, name))
 
@@ -269,11 +269,11 @@ async def profile(ctx, mention):
     async for message in profiles_channel.history(limit = 100 + len(ctx.guild.members)):
       if message.author == target_user:
         profile = message
-        await ctx.send('You can find {}\'s profile at: {}'.format(target_user.nick, message.jump_url))
+        await ctx.send('You can find {}\'s profile at: {}'.format(target_user.display_name, message.jump_url))
         return
 
     if not profile:
-      await ctx.send('{} has not yet posted to {}.'.format(target_user.nick, profiles_channel.mention))
+      await ctx.send('{} has not yet posted to {}.'.format(target_user.display_name, profiles_channel.mention))
 
   else:
     ctx.author.send('You must agree to the rules to view any profiles.')
@@ -403,9 +403,9 @@ async def setname(ctx, user, *, name):
       return
 
     target_user = ctx.message.mentions[0]
-    old_name = target_user.nick
-    await target_user.edit(nick = name)
-    await send_notification(ctx.guild, "{} updated {}'s nickname to {}!".format(ctx.author.nick, old_name, name))
+    old_name = target_user.display_name
+    await target_user.edit(nick=name)
+    await send_notification(ctx.guild, "{} updated {}'s nickname to {}!".format(ctx.author.display_name, old_name, name))
 
   else:
 
@@ -440,7 +440,7 @@ async def uncap(ctx, mention):
   if is_admin(ctx.author) or is_mod(ctx.author):
 
     if not user_has_role(target_user, CONFIG['CapRole']):
-      await ctx.send('Are you blind, {}? You can\'t uncap {} '.format(ctx.author.mention, target_user.nick) +
+      await ctx.send('Are you blind, {}? You can\'t uncap {} '.format(ctx.author.mention, target_user.display_name) +
                      'if they\'re not wearing the Dunce Cap!')
 
     else:
@@ -450,8 +450,8 @@ async def uncap(ctx, mention):
                                                                 target_user.mention,
                                                                 ctx.author.mention))
       await notifications_channel.send('{} has been uncapped by {}!'.format(
-                                                                target_user.nick,
-                                                                ctx.author.nick))
+                                                                target_user.display_name,
+                                                                ctx.author.display_name))
       return
 
   else:

@@ -83,6 +83,8 @@ async def cap(ctx, mention):
   staff_channel = find_channel(ctx.guild, CONFIG['StaffChannel'])
   notifications_channel = find_channel(ctx.guild, CONFIG['NotificationsChannel'])
 
+  await ctx.send('DEBUG: target_user {}'.format(target_user.name))
+
   if not cap_role:
     await ctx.send('`!cap`: There was an error attempting to cap {}.'.format(target_user.mention))
     return
@@ -109,7 +111,7 @@ async def cap(ctx, mention):
                              'be able to add reactions to other users\' messages. The offending ' +
                              'violation must be remediated, and your dunce cap will be removed ' +
                              'after a certain amount of time.')
-      await staff_channel.send('{} has been dunce capped by {} for {}!'.format(
+      await staff_channel.send('{} has been dunce capped by {}!'.format(
                                                                           target_user.mention,
                                                                           ctx.author.mention))
       await notifications_channel.send('{} has been dunce capped by {}!'.format(

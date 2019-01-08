@@ -83,8 +83,6 @@ async def cap(ctx, mention):
   staff_channel = find_channel(ctx.guild, CONFIG['StaffChannel'])
   notifications_channel = find_channel(ctx.guild, CONFIG['NotificationsChannel'])
 
-  await ctx.send('DEBUG: target_user {}'.format(target_user.name))
-
   if not cap_role:
     await ctx.send('`!cap`: There was an error attempting to cap {}.'.format(target_user.mention))
     return
@@ -98,6 +96,7 @@ async def cap(ctx, mention):
                                                           ctx.author.mention, target_user.mention))
     await staff_channel.send('{} has been capped for attempting to cap {}!'.format(
                                           ctx.author.mention, target_user.mention))
+    return
 
   if is_admin(ctx.author) or is_mod(ctx.author):
 
@@ -115,10 +114,9 @@ async def cap(ctx, mention):
                                                                           target_user.mention,
                                                                           ctx.author.mention))
       await notifications_channel.send('{} has been dunce capped by {}!'.format(
-                                                                          target_user,
-                                                                          ctx.author))
-
-
+                                                                          target_user.name,
+                                                                          ctx.author.name))
+      return
 
   else:
     await ctx.send('`!cap`: You are not worthy to wield the mighty cap.')

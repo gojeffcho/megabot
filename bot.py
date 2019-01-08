@@ -46,7 +46,7 @@ async def on_command_error(ctx, e):
   Returns:
     None
   """
-  await ctx.send(e)
+  await ctx.send('Error: {}'.format(e))
 
 
 @megabot.command()

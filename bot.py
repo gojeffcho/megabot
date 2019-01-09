@@ -185,7 +185,7 @@ async def courses(ctx):
 
 
 @megabot.command()
-async def echo(ctx, message):
+async def echo(ctx, *, message):
   """Admin command: make the bot say something.
 
   Args:

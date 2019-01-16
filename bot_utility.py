@@ -1,4 +1,4 @@
-from config import CONFIG
+from bot_config import CONFIG
 
 admin_role_identifier = CONFIG['AdminRole']
 mod_role_identifier = CONFIG['ModRole']

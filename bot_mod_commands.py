@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 from bot_config import CONFIG
 from bot_utility import is_admin, is_mod, find_channel, \
@@ -9,7 +10,7 @@ class BotModCommands():
     self.bot = bot
 
 
-  @megabot.command()
+  @commands.command()
   async def cap(ctx, mention):
   """Mod command: Dunce cap a mentioned user.
 
@@ -72,7 +73,7 @@ class BotModCommands():
     await ctx.send('`!cap`: You are not worthy to wield the mighty cap.')
 
 
-  @megabot.command()
+  @commands.command()
   async def setname(ctx, user, *, name):
   """Mod command: change a user's nickname on this server.
 
@@ -99,7 +100,7 @@ class BotModCommands():
     await ctx.send("`!setname`: You do not have the privileges to use this command.")
 
   
-  @megabot.command()
+  @commands.command()
   async def uncap(ctx, mention):
   """Mod command: Remove the dunce cap from a mentioned user.
 

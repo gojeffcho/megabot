@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 from bot_config import CONFIG
 from bot_secure import watch
@@ -9,7 +10,7 @@ class BotAdminCommands():
   def __init__(self, bot):
     self.bot = bot
 
-  @megabot.command()
+  @commands.command()
   async def echo(ctx, *, message):
   """Admin command: make the bot say something.
 
@@ -25,7 +26,7 @@ class BotAdminCommands():
     await ctx.send(message)
     
   
-  @megabot.command()
+  @commands.command()
   async def monitor(ctx, mention):
   """Admin command: monitor a user.  No reason, don't worry.
   

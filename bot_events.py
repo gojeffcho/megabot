@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 from bot_config import CONFIG
 from bot_utility import is_admin, is_mod, find_channel, \
@@ -8,7 +9,7 @@ class BotEvents():
   def __init__(self, bot):
     self.bot = bot
 
-  @megabot.event
+  @events.event
   async def on_ready():
     """Logs connection message for the Megabot."""
 
@@ -16,7 +17,7 @@ class BotEvents():
     print('Logged on as {0.user}.'.format(megabot))
 
 
-  @megabot.event
+  @events.event
   async def on_member_join(member):
     welcome_channel = find_channel(member.guild, CONFIG['WelcomeChannel'])
     rules_channel = find_channel(member.guild, CONFIG['RulesChannel'])
@@ -31,7 +32,7 @@ class BotEvents():
                                 'all the regular channels on the server!')
 
 
-  @megabot.event
+  @events.event
   async def on_command_error(ctx, e):
     """Command error handler.
 

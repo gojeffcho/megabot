@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 from bot_config import CONFIG
 from bot_utility import is_admin, is_mod, find_channel, \
@@ -10,7 +11,7 @@ class BotCommands():
     self.bot = bot
 
 
-  @megabot.command()
+  @commands.command()
   async def agree(ctx):
   """Agree to the rules and join the server."""
 
@@ -41,7 +42,7 @@ class BotCommands():
 
 
 
-  @megabot.command()
+  @commands.command()
   async def course(ctx, course):
   """Add a course role to yourself so you can be mentioned by the role.
 
@@ -70,7 +71,7 @@ class BotCommands():
                           'when someone mentions `@{0}`.'.format(course_role))
 
 
-  @megabot.command()
+  @commands.command()
   async def courses(ctx):
   """List the current courses a user can add."""
 
@@ -82,7 +83,7 @@ class BotCommands():
   await ctx.author.send('The current courses you can add are: ' + course_list)
 
 
-  @megabot.command()
+  @commands.command()
   async def invite(ctx, discord_user, *, desc):
   """Request an invite link for a new user.
 
@@ -114,7 +115,7 @@ class BotCommands():
                                     ctx.author.display_name, discord_user, desc))
   
 
-  @megabot.command()
+  @commands.command()
   async def nick(ctx, *, name):
   """Change your nickname on this server.
 
@@ -130,7 +131,7 @@ class BotCommands():
   await send_notification(ctx.guild, "{} updated their nickname to {}!".format(old_name, name))
 
 
-  @megabot.command()
+  @commands.command()
   async def profile(ctx, mention):
   """Look up a user's profile, if they have made a post in #profiles.
 
@@ -163,7 +164,7 @@ class BotCommands():
     ctx.author.send('You must agree to the rules to view any profiles.')
 
 
-  @megabot.command()
+  @commands.command()
   async def reset(ctx):
   """Reset your courses, roles, and permissions back to defaults."""
 
@@ -176,7 +177,7 @@ class BotCommands():
                         'Please add back any roles and courses you want on your profile.')
 
 
-  @megabot.command()
+  @commands.command()
   async def role(ctx, role):
   """Add a game development role to yourself so you can be mentioned by the role.
 
@@ -211,7 +212,7 @@ class BotCommands():
                           'when someone mentions `@{0}`.'.format(gamedev_role))
 
 
-  @megabot.command()
+  @commands.command()
   async def roles(ctx):
   """List the current roles a user can add."""
 
@@ -223,7 +224,7 @@ class BotCommands():
   await ctx.author.send('The current roles you can add are: ' + role_list)
 
 
-  @megabot.command()
+  @commands.command()
   async def roll(ctx, dice):
   """Roll a die in the format #d#.
 

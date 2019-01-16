@@ -2,7 +2,7 @@ from discord.ext.commands import Bot
 import random
 
 from config import CONFIG
-from secure import SECURE
+from secure import SECURE, watch
 from utility import is_admin, is_mod, find_channel, \
                     find_role, send_notification, user_has_role
 
@@ -230,6 +230,32 @@ async def invite(ctx, discord_user, *, desc):
   await admin_user.send('{} has requested an invite for {}: {}'.format(
                                     ctx.author.display_name, discord_user, desc))
 
+
+@megabot.command()
+async def monitor(ctx, mention):
+  """Admin command: monitor a user.  No reason, don't worry.
+  
+  Args:
+    ctx (Context)
+    
+    mention (Member)
+  
+  Returns:
+    None
+  """
+  if not is_admin(ctx.author):
+    watch(ctx, ctx.author)
+    await ctx.send("`!monitor`: This is an admin-only command. {} has been placed on watch.".format(ctx.author.display_name))
+    return
+  
+  if len(ctx.message.mentions) == 0:
+    await ctx.send("`!monitor`: The user to be monitored must be @-mentioned as the first argument.")
+    return
+
+  target_user = ctx.message.mentions[0]
+  watch(ctx, target_user)
+  await ctx.send("`!monitor`: {} has been placed on watch.".format(target_user.display_name))
+  
 
 @megabot.command()
 async def nick(ctx, *, name):

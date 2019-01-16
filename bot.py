@@ -2,6 +2,7 @@ from discord.ext.commands import Bot
 
 from bot_config import CONFIG
 from bot_secure import SECURE
+import random
 
 startup_extensions = ['bot_admin_commands', 'bot_mod_commands',
                       'bot_commands']

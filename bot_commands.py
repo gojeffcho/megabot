@@ -1,4 +1,3 @@
-import discord
 from discord.ext import commands
 from bot_config import CONFIG
 from bot_utility import is_admin, is_mod, find_channel, \
@@ -6,13 +5,13 @@ from bot_utility import is_admin, is_mod, find_channel, \
 
 import random
 
-class Member():
+class User():
   def __init__(self, bot):
     self.bot = bot
 
 
   @commands.command()
-  async def agree(ctx):
+  async def agree(self, ctx):
     """Agree to the rules and join the server."""
 
     member = ctx.author
@@ -43,7 +42,7 @@ class Member():
 
 
   @commands.command()
-  async def course(ctx, course):
+  async def course(self, ctx, course):
     """Add a course role to yourself so you can be mentioned by the role.
 
     Args:
@@ -72,7 +71,7 @@ class Member():
 
 
   @commands.command()
-  async def courses(ctx):
+  async def courses(self, ctx):
     """List the current courses a user can add."""
 
     course_list = ''
@@ -84,7 +83,7 @@ class Member():
 
 
   @commands.command()
-  async def invite(ctx, discord_user, *, desc):
+  async def invite(self, ctx, discord_user, *, desc):
     """Request an invite link for a new user.
 
     Args:
@@ -116,7 +115,7 @@ class Member():
 
 
   @commands.command()
-  async def nick(ctx, *, name):
+  async def nick(self, ctx, *, name):
     """Change your nickname on this server.
 
     Args:
@@ -132,7 +131,7 @@ class Member():
 
 
   @commands.command()
-  async def profile(ctx, mention):
+  async def profile(self, ctx, mention):
     """Look up a user's profile, if they have made a post in #profiles.
 
     Args:
@@ -142,12 +141,16 @@ class Member():
     Returns:
       None
     """
+    print('Context: {}'.format(ctx))
+    
     if user_has_role(ctx.author, CONFIG['ConfirmedRole']):
       if len(ctx.message.mentions) < 1 or len(ctx.message.mentions) > 1:
         await ctx.author.send('`!profile`: You must mention one user whose profile you wish to look up.')
         return
 
       target_user = ctx.message.mentions[0]
+      print('User: {}'.format(target_user))
+    
       profiles_channel = find_channel(ctx.guild, CONFIG['ProfilesChannel'])
       profile = None
 
@@ -161,11 +164,11 @@ class Member():
         await ctx.send('{} has not yet posted to {}.'.format(target_user.display_name, profiles_channel.mention))
 
     else:
-      ctx.author.send('You must agree to the rules to view any profiles.')
+      await ctx.author.send('You must agree to the rules to view any profiles.')
 
 
   @commands.command()
-  async def reset(ctx):
+  async def reset(self, ctx):
     """Reset your courses, roles, and permissions back to defaults."""
 
     if user_has_role(ctx.author, CONFIG['ConfirmedRole']):
@@ -178,7 +181,7 @@ class Member():
 
 
   @commands.command()
-  async def role(ctx, role):
+  async def role(self, ctx, role):
     """Add a game development role to yourself so you can be mentioned by the role.
 
     Args:
@@ -213,7 +216,7 @@ class Member():
 
 
   @commands.command()
-  async def roles(ctx):
+  async def roles(self, ctx):
     """List the current roles a user can add."""
 
     role_list = ''
@@ -225,12 +228,13 @@ class Member():
 
 
   @commands.command()
-  async def roll(ctx, dice):
+  async def roll(self, ctx, dice):
     """Roll a die in the format #d#.
 
     Args:
       dice (String)
-        String of format #d#, e.g. 3d6, to roll a d6 three times.
+        String of format <#>d<##>, e.g. 3d6, to roll a d6 three times. 
+        You may roll a maximum of 20 dice.
 
     Returns:
       result (Int)
@@ -253,6 +257,10 @@ class Member():
 
     num_dice = int(args[0])
     die_type = int(args[1])
+    
+    if num_dice > 20:
+      await ctx.send('`!roll`: You can roll a maximum of 20 dice.')
+      return
 
     if die_type not in dice_available:
       dice_output = ['d{}'.format(die) for die in dice_available]
@@ -262,13 +270,18 @@ class Member():
 
     if num_dice < 1:
       await ctx.send('`!roll`: The first number must be >= 1.')
+      return
 
     roll_total = 0
+    rolls    = []
+    
     for i in range(num_dice):
-      roll_total += random.randint(1, die_type)
+      roll = random.randint(1, die_type)
+      rolls.append(roll)
+      roll_total += roll
 
-    await ctx.send('{} rolls {} and gets... {}!'.format(ctx.author.mention, dice, roll_total))
+    await ctx.send('{} rolls {} and gets... {}\nRolls: {}'.format(ctx.author.mention, dice, roll_total, rolls))
 
 
 def setup(bot):
-  bot.add_cog(Member(bot))
+  bot.add_cog(User(bot))

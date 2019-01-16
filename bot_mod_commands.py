@@ -11,7 +11,7 @@ class Mod():
 
 
   @commands.command()
-  async def cap(ctx, mention):
+  async def cap(self, ctx, mention):
     """Mod command: Dunce cap a mentioned user.
 
     Args:
@@ -74,7 +74,7 @@ class Mod():
 
 
     @commands.command()
-    async def setname(ctx, user, *, name):
+    async def setname(self, ctx, user, *, name):
       """Mod command: change a user's nickname on this server.
 
       Args:
@@ -100,7 +100,7 @@ class Mod():
 
 
     @commands.command()
-    async def uncap(ctx, mention):
+    async def uncap(self, ctx, mention):
       """Mod command: Remove the dunce cap from a mentioned user.
 
         Args:

@@ -28,3 +28,7 @@ CONFIG['RulesChannel']          = 'rules'
 CONFIG['StaffChannel']          = 'staff'
 
 CONFIG['Dice'] = [2, 4, 6, 8, 10, 12, 20, 100, 1000]
+
+CONFIG['DATA']            = {}
+CONFIG['DATA']['monitor'] = []
+CONFIG['DATAFILE']        = '/home/megabot/megabot/data.pkl'

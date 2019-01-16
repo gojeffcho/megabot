@@ -1,3 +1,4 @@
+import pickle
 from bot_config import CONFIG
 
 admin_role_identifier = CONFIG['AdminRole']
@@ -74,6 +75,46 @@ def find_role(guild, role_string):
 
   return None
 
+
+def load_data(file):
+  """Loads the persistent data for the bot to use.
+  
+  Args:
+    file (File)
+      The pickle file to open.
+    
+  Returns:
+    data (Dict) or None
+    The Python object reconstructed from the pickle file.
+  """
+  try:
+    with open(CONFIG['DATAFILE'], 'r+') as f:
+      data = pickle.load(f)
+  
+  except:
+    print('File could not be found or loaded.')
+    return None
+  
+  return data
+
+
+def save_data(file):
+  """Write out the persistent data for the bot.
+  
+  Args:
+    file (File)
+      The pickle file to save.
+    
+  Returns:
+    None
+  """
+  try:
+    with open(CONFIG['DATAFILE'], 'w+') as f:
+      pickle.dump(CONFIG['DATA'], f, protocol=4)
+  
+  except Exception as e:
+    print('File could not be saved. {}'.format(e))
+  
 
 def user_has_role(user, role_string):
   """Utility function: given a user and a role string, check if that

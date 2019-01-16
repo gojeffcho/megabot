@@ -2,6 +2,7 @@ from discord.ext.commands import Bot
 
 from bot_config import CONFIG
 from bot_secure import SECURE
+from bot_utility import load_data
 import random
 
 startup_extensions = ['bot_admin_commands', 'bot_mod_commands',
@@ -16,6 +17,13 @@ async def on_ready():
 
   random.seed()
   print('Logged on as {0.user}.'.format(megabot))
+  data = load_data(CONFIG['DATAFILE'])
+  
+  if not data:
+    print('Error retrieving data store.')
+  
+  else:
+    CONFIG['DATA'] = data
 
 
 @megabot.event

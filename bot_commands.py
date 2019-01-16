@@ -6,7 +6,7 @@ from bot_utility import is_admin, is_mod, find_channel, \
 
 import random
 
-class BotCommands():
+class Member():
   def __init__(self, bot):
     self.bot = bot
 

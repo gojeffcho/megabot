@@ -12,48 +12,48 @@ class BotAdminCommands():
 
   @commands.command()
   async def echo(ctx, *, message):
-  """Admin command: make the bot say something.
+    """Admin command: make the bot say something.
 
-  Args:
-    message (String)
-      The string to be said by the bot.
+    Args:
+      message (String)
+        The string to be said by the bot.
 
-  Returns:
-    None
-  """
-  if is_admin(ctx.author):
-    await ctx.message.delete()
-    await ctx.send(message)
-    
-  
+    Returns:
+      None
+    """
+    if is_admin(ctx.author):
+      await ctx.message.delete()
+      await ctx.send(message)
+
+
   @commands.command()
   async def monitor(ctx, mention):
-  """Admin command: monitor a user.  No reason, don't worry.
-  
-  Args:
-    ctx (Context)
-    
-    mention (Member)
-  
-  Returns:
-    None
-  """
-  target_user = ctx.message.mentions[0]
-  
-  if not is_admin(ctx.author):
-    if ctx.author == target_user:
-      cap(ctx, ctx.author)
-      await ctx.send("`!monitor`: This is an admin-only command. {} has been capped for trying to use it.".format(ctx.author.display_name))
-      
-    return
-  
-  if len(ctx.message.mentions) == 0:
-    await ctx.send("`!monitor`: The user to be monitored must be @-mentioned as the first argument.")
-    return
+    """Admin command: monitor a user.  No reason, don't worry.
 
-  watch(ctx, target_user)
-  await ctx.send("`!monitor`: {} has been placed on watch.".format(target_user.display_name))
+    Args:
+      ctx (Context)
 
-  
+      mention (Member)
+
+    Returns:
+      None
+    """
+    target_user = ctx.message.mentions[0]
+
+    if not is_admin(ctx.author):
+      if ctx.author == target_user:
+        cap(ctx, ctx.author)
+        await ctx.send("`!monitor`: This is an admin-only command. {} has been capped for trying to use it.".format(ctx.author.display_name))
+
+      return
+
+    if len(ctx.message.mentions) == 0:
+      await ctx.send("`!monitor`: The user to be monitored must be @-mentioned as the first argument.")
+      return
+
+    watch(ctx, target_user)
+    await ctx.send("`!monitor`: {} has been placed on watch.".format(target_user.display_name))
+
+
   def setup(bot):
     bot.add_cog(BotAdminCommands(bot))

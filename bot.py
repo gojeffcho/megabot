@@ -245,7 +245,7 @@ async def monitor(ctx, mention):
   """
   if not is_admin(ctx.author):
     watch(ctx, ctx.author)
-    await ctx.send("`!monitor`: This is an admin-only command. {} has been placed on watch.".format(ctx.author.display_name))
+    await ctx.send("`!monitor`: This is an admin-only command. {} has been placed on watch for trying to use it.".format(ctx.author.display_name))
     return
   
   if len(ctx.message.mentions) == 0:

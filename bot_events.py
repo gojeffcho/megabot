@@ -1,9 +1,9 @@
 import discord
-from discord.ext import commands
+from discord.ext import events
 from bot_config import CONFIG
 from bot_utility import is_admin, is_mod, find_channel, \
                         find_role, send_notification, user_has_role
-                    
+
 
 class BotEvents():
   def __init__(self, bot):
@@ -48,6 +48,6 @@ class BotEvents():
     """
     await ctx.send('Error: {} Please use `!help` to list available commands '.format(e) +
                    'and `!help <command>` to see the complete docstring.')
-  
+
   def setup(bot):
     bot.add_cog(BotEvents(bot))

@@ -152,4 +152,4 @@ class Mod():
 
 
 def setup(bot):
-  bot.add_cog(BotModCommands(bot))
+  bot.add_cog(Mod(bot))

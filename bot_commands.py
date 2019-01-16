@@ -271,4 +271,4 @@ class Member():
 
 
 def setup(bot):
-  bot.add_cog(BotCommands(bot))
+  bot.add_cog(Commands(bot))

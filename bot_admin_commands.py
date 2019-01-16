@@ -55,5 +55,5 @@ class BotAdminCommands():
     await ctx.send("`!monitor`: {} has been placed on watch.".format(target_user.display_name))
 
 
-  def setup(bot):
-    bot.add_cog(BotAdminCommands(bot))
+def setup(bot):
+  bot.add_cog(BotAdminCommands(bot))

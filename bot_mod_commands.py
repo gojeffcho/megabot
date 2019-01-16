@@ -151,5 +151,5 @@ class BotModCommands():
           await ctx.send('`!uncap`: You are not strong enough to discard the mighty cap.')
 
 
-  def setup(bot):
-    bot.add_cog(BotModCommands(bot))
+def setup(bot):
+  bot.add_cog(BotModCommands(bot))

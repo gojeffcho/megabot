@@ -270,5 +270,5 @@ class BotCommands():
     await ctx.send('{} rolls {} and gets... {}!'.format(ctx.author.mention, dice, roll_total))
 
 
-  def setup(bot):
-    bot.add_cog(BotCommands(bot))
+def setup(bot):
+  bot.add_cog(BotCommands(bot))

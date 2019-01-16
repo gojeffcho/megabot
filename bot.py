@@ -9,7 +9,7 @@ startup_extensions = ['bot_admin_commands', 'bot_mod_commands',
 megabot = Bot(command_prefix = CONFIG['Prefix'])
 
 
-@events.event
+@megabot.event
 async def on_ready():
   """Logs connection message for the Megabot."""
 
@@ -17,7 +17,7 @@ async def on_ready():
   print('Logged on as {0.user}.'.format(megabot))
 
 
-@events.event
+@megabot.event
 async def on_member_join(member):
   welcome_channel = find_channel(member.guild, CONFIG['WelcomeChannel'])
   rules_channel = find_channel(member.guild, CONFIG['RulesChannel'])
@@ -32,7 +32,7 @@ async def on_member_join(member):
                              'all the regular channels on the server!')
 
 
-@events.event
+@megabot.event
 async def on_command_error(ctx, e):
   """Command error handler.
 

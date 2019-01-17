@@ -2,6 +2,7 @@ import discord
 
 from collections import Counter
 from time import time
+from datetime import datetime, timedelta
 
 from discord.ext import commands
 from bot_config import CONFIG
@@ -68,27 +69,44 @@ class Admin():
 
 
   @commands.command()
-  async def stats(self, ctx, num: int=5):
+  async def stats(self, ctx, num: int=5, range: str='month'):
     """Admin command: generate post stats.
     
     Args:
-      num (Int, Optional)
+      num (Int, optional)
         The number of top posters to find. Defaults to 5.
+        
+      range (String, optional)
+        One of {all, month}. Defaults to month.
     
     Returns:
       None
     """
+    if not is_admin(ctx.author):
+      await ctx.send('`!stats`: This is an admin-only command.')
+      return
+      
+    if not range == 'month' or range == 'all':
+      await ctx.send('`!stats`: Range must be `month` or `all`.')
+      return
+      
     await ctx.send('`!stats`: Calculating post statistics. This will take some time.')
     
     start_time = time()
     
     channels = ctx.guild.channels
-    count = Counter()
+    count = Counter()    
+    target_date = datetime.now() - timedelta(days=30)
     
     for channel in channels:
       if isinstance(channel, discord.TextChannel):
-        async for post in channel.history(limit=None):
-          count[post.author] += 1
+        if range == 'all':
+          async for post in channel.history(limit=None):
+            count[post.author] += 1
+
+        elif range == 'month':
+          async for post in channel.history(limit=None, after=target_date):
+            count[post.author] += 1
     
     max_name_width = 0
     max_num_width = 0
@@ -126,8 +144,13 @@ class Admin():
     time_output = 'This command executed in {:.2f} seconds'.format(
                                               end_time - start_time)
     
-    await ctx.send('The top posters are: {} \n {}'.format(
-                                output_text, time_output))
+    if range == 'month':
+      await ctx.send('The top posters for the past 30 days are: {} \n {}'.format(
+                                  output_text, time_output))
+    
+    elif range == 'all':
+      await ctx.send('The top posters of all time are: {} \n {}'.format(
+                                  output_text, time_output))
     
 
   @commands.command()

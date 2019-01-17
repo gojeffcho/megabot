@@ -55,6 +55,9 @@ async def on_command_error(ctx, e):
   Returns:
     None
   """
+  if ctx.message.content == '!' or ctx.message.content[1] == '!':
+    return
+  
   await ctx.send('Error: {} Please use `!help` to list available commands '.format(e) +
                  'and `!help <command>` to see the complete docstring.')
 

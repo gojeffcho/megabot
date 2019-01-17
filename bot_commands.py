@@ -233,7 +233,7 @@ class User():
 
     Args:
       dice (String)
-        String of format <#>d<##>, e.g. 3d6, to roll a d6 three times. 
+        String of format #d#, e.g. 3d6, to roll a d6 three times. 
         You may roll a maximum of 20 dice.
 
     Returns:
@@ -281,6 +281,44 @@ class User():
       roll_total += roll
 
     await ctx.send('{} rolls {} and gets... {}\nRolls: {}'.format(ctx.author.mention, dice, roll_total, rolls))
+    
+    
+  @commands.command()
+  async def whois(self, ctx, role_or_course):
+    """Look up who is in a course or role.
+    
+    Args:
+      role_or_course (Role)
+        The role or course from which to list current members. Must be a role-mention.
+      
+    Returns:
+      None
+    """
+    if len(ctx.message.role_mentions) < 1:
+      await ctx.send('`!whois`: The role you wish to look up must be mentioned as an argument.')
+      return
+      
+    target_role = ctx.message.role_mentions[0]
+    role_is_gamedev = target_role.name in CONFIG['GameDevRoles']
+    role_is_course = target_role.name in CONFIG['CourseRoles']
+    
+    if not role_is_gamedev and not role_is_course:
+      await ctx.send('`!whois`: This role is not eligible for lookup.')
+      return
+    
+    matches = []
+    
+    for member in ctx.guild.members:
+      if target_role in member.roles:
+        matches.append(member)
+    
+    match_string = ''
+    
+    for member in matches:
+      match_string += '\n * {}'.format(member.display_name)
+    
+    await ctx.send('`!whois`: The members who are in {} are: {}'.format(
+                                target_role.name, match_string))
 
 
 def setup(bot):

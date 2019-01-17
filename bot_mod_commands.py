@@ -99,56 +99,56 @@ class Mod():
         await ctx.send("`!setname`: You do not have the privileges to use this command.")
 
 
-    @commands.command()
-    async def uncap(self, ctx, mention):
-      """Mod command: Remove the dunce cap from a mentioned user.
+  @commands.command()
+  async def uncap(self, ctx, mention):
+    """Mod command: Remove the dunce cap from a mentioned user.
 
-        Args:
-          mention (User)
-            The user to uncap.
+      Args:
+        mention (User)
+          The user to uncap.
 
-        Returns:
-          None
-      """
-      if len(ctx.message.mentions) == 0:
-        await ctx.send("`!uncap`: The user to be uncapped must be @-mentioned as the first argument.")
-        return
+      Returns:
+        None
+    """
+    if len(ctx.message.mentions) == 0:
+      await ctx.send("`!uncap`: The user to be uncapped must be @-mentioned as the first argument.")
+      return
 
-      target_user = ctx.message.mentions[0]
-      cap_role = find_role(ctx.guild, CONFIG['CapRole'])
-      staff_channel = find_channel(ctx.guild, CONFIG['StaffChannel'])
-      notifications_channel = find_channel(ctx.guild, CONFIG['NotificationsChannel'])
+    target_user = ctx.message.mentions[0]
+    cap_role = find_role(ctx.guild, CONFIG['CapRole'])
+    staff_channel = find_channel(ctx.guild, CONFIG['StaffChannel'])
+    notifications_channel = find_channel(ctx.guild, CONFIG['NotificationsChannel'])
 
-      if not cap_role:
-        await ctx.send('`!uncap`: There was an error attempting to uncap {}.'.format(target_user.mention))
-        return
+    if not cap_role:
+      await ctx.send('`!uncap`: There was an error attempting to uncap {}.'.format(target_user.mention))
+      return
 
-      # Moderator uses !cap
-      if is_admin(ctx.author) or is_mod(ctx.author):
+    # Moderator uses !cap
+    if is_admin(ctx.author) or is_mod(ctx.author):
 
-        if not user_has_role(target_user, CONFIG['CapRole']):
-          await ctx.send('Are you blind, {}? You can\'t uncap {} '.format(ctx.author.mention, target_user.display_name) +
-                         'if they\'re not wearing the Dunce Cap!')
-
-        else:
-          await target_user.remove_roles(cap_role)
-          await target_user.send('Your dunce cap is lifted.')
-          await staff_channel.send('{} has been uncapped by {}!'.format(
-                                                                    target_user.mention,
-                                                                    ctx.author.mention))
-          await notifications_channel.send('{} has been uncapped by {}!'.format(
-                                                                    target_user.display_name,
-                                                                    ctx.author.display_name))
-          return
+      if not user_has_role(target_user, CONFIG['CapRole']):
+        await ctx.send('Are you blind, {}? You can\'t uncap {} '.format(ctx.author.mention, target_user.display_name) +
+                       'if they\'re not wearing the Dunce Cap!')
 
       else:
+        await target_user.remove_roles(cap_role)
+        await target_user.send('Your dunce cap is lifted.')
+        await staff_channel.send('{} has been uncapped by {}!'.format(
+                                                                  target_user.mention,
+                                                                  ctx.author.mention))
+        await notifications_channel.send('{} has been uncapped by {}!'.format(
+                                                                  target_user.display_name,
+                                                                  ctx.author.display_name))
+        return
 
-        # Non-moderator attempts to use !uncap
-        if not user_has_role(target_user, CONFIG['CapRole']):
-          await ctx.send('`!uncap`: How can you uncap someone who isn\'t ' +
-                         'wearing a cap to begin with? Reconsider your life choices.')
-        else:
-          await ctx.send('`!uncap`: You are not strong enough to discard the mighty cap.')
+    else:
+
+      # Non-moderator attempts to use !uncap
+      if not user_has_role(target_user, CONFIG['CapRole']):
+        await ctx.send('`!uncap`: How can you uncap someone who isn\'t ' +
+                       'wearing a cap to begin with? Reconsider your life choices.')
+      else:
+        await ctx.send('`!uncap`: You are not strong enough to discard the mighty cap.')
 
 
 def setup(bot):

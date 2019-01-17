@@ -112,15 +112,18 @@ class Admin():
     
       if CONFIG['DATA']['monitor'] == []:
         await ctx.send('`!watchlist`: No users currently on watch.')
-      
+        return
+
       else:
         watched = ''
-    
-        [watched + ' {}'.format(member.display_name)
-        for member 
-        in CONFIG['DATA']['monitor']]
-    
-        await ctx.send('`!watchlist`: {}'.format(watched))
+
+      for member in CONFIG['DATA']['monitor']:
+        if member == CONFIG['DATA']['monitor'][0]:
+          watched += '{}'.format(member.display_name)
+        else:
+          watched += ', {}'.format(member.display_name)
+
+      await ctx.send('`!watchlist`: {}'.format(watched))
   
   @commands.command()
   async def write(self, ctx):

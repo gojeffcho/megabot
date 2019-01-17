@@ -1,5 +1,8 @@
 import discord
 
+from collections import Counter
+from time import time
+
 from discord.ext import commands
 from bot_config import CONFIG
 from bot_secure import watch, unwatch
@@ -62,6 +65,69 @@ class Admin():
     
     else:
       await ctx.send('`!monitor`: {} is already on watch.')
+
+
+  @commands.command()
+  async def stats(self, ctx, num: int=5):
+    """Admin command: generate post stats.
+    
+    Args:
+      num (Int, Optional)
+        The number of top posters to find. Defaults to 5.
+    
+    Returns:
+      None
+    """
+    await ctx.send('`!stats`: Calculating post statistics. This will take some time.')
+    
+    start_time = time()
+    
+    channels = ctx.guild.channels
+    count = Counter()
+    
+    for channel in channels:
+      if isinstance(channel, discord.TextChannel):
+        async for post in channel.history(limit=None):
+          count[post.author] += 1
+    
+    max_name_width = 0
+    max_num_width = 0
+    
+    top_list = count.most_common(num)
+    
+    for member, posts_num in top_list:
+      first_name = member.display_name.split()[0]
+      
+      if first_name[-1] == ':':
+        first_name = first_name[:-1]
+        
+      name_len = len(first_name)
+      if name_len > max_name_width:
+        max_name_width = name_len
+      
+      num_len = len('{}'.format(posts_num))
+      if num_len > max_num_width:
+        max_num_width = num_len
+      
+    output_text = ''
+    
+    for member, posts_num in top_list:
+      first_name = member.display_name.split()[0]
+      
+      if first_name[-1] == ':':
+        first_name = first_name[:-1]
+      
+      output_text += '\n `{0:.<{name}}..{1:.>{num}d}`'.format(
+        first_name, posts_num, 
+        name=max_name_width, num=max_num_width)
+    
+    end_time = time()
+    
+    time_output = 'This command executed in {:.2f} seconds'.format(
+                                              end_time - start_time)
+    
+    await ctx.send('The top posters are: {} \n {}'.format(
+                                output_text, time_output))
     
 
   @commands.command()

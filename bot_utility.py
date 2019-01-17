@@ -74,7 +74,29 @@ def find_role(guild, role_string):
       return role
 
   return None
+  
 
+def match_role(guild, role_string):
+  """Utility function: given a role string, find the exact corresponding
+  Role if it exists.
+
+  Args:
+    guild (Guild)
+      The Guild to search for roles.
+
+    role_string (String)
+      The string that should be exactly the Role's name.
+
+  Returns:
+    result
+    Role object if found, otherwise None.
+  """
+  for role in guild.roles:
+    if role_string == role.name:
+      return role
+
+  return None
+  
 
 def load_data(file):
   """Loads the persistent data for the bot to use.

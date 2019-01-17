@@ -1,7 +1,7 @@
 from discord.ext import commands
 from bot_config import CONFIG
-from bot_utility import is_admin, is_mod, find_channel, \
-                        find_role, send_notification, user_has_role
+from bot_utility import is_admin, is_mod, find_channel, find_role, \
+                        match_role, send_notification, user_has_role
 
 import random
 
@@ -288,17 +288,18 @@ class User():
     """Look up who is in a course or role.
     
     Args:
-      role_or_course (Role)
-        The role or course from which to list current members. Must be a role-mention.
+      role_or_course (String)
+        The role or course from which to list current members.
       
     Returns:
       None
     """
-    if len(ctx.message.role_mentions) < 1:
-      await ctx.send('`!whois`: The role you wish to look up must be mentioned as an argument.')
+    target_role = match_role(ctx.guild, role_or_course)
+    
+    if not target_role:
+      await ctx.send('`!whois`: The role {} could not be found.'.format(role_or_course))
       return
-      
-    target_role = ctx.message.role_mentions[0]
+    
     role_is_gamedev = target_role.name in CONFIG['GameDevRoles']
     role_is_course = target_role.name in CONFIG['CourseRoles']
     

@@ -4,6 +4,7 @@ from bot_config import CONFIG
 admin_role_identifier = CONFIG['AdminRole']
 mod_role_identifier = CONFIG['ModRole']
 
+
 def is_admin(user):
   """Check whether a user is an admin.
 

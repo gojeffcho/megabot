@@ -2,8 +2,11 @@ from discord.ext.commands import Bot
 
 from bot_config import CONFIG
 from bot_secure import SECURE
-from bot_utility import load_data
+from bot_utility import load_data, find_channel, find_role
+
 import random
+import sqlite3
+import traceback
 
 startup_extensions = ['bot_admin_commands', 'bot_mod_commands',
                       'bot_commands']
@@ -17,13 +20,6 @@ async def on_ready():
 
   random.seed()
   print('Logged on as {0.user}.'.format(megabot))
-  data = load_data(CONFIG['DATAFILE'])
-  
-  if not data:
-    print('Error retrieving data store.')
-  
-  else:
-    CONFIG['DATA'] = data
 
 
 @megabot.event
@@ -54,11 +50,18 @@ async def on_command_error(ctx, e):
 
   Returns:
     None
-  """
+  """  
+  ignored = (sqlite3.OperationalError, sqlite3.IntegrityError, ValueError)
+  if isinstance(e, ignored):
+    print('{}'.format(e))
+    traceback.print_stack()
+    return
+  
   if ctx.message.content == '!' or ctx.message.content[1] == '!':
     return
   
-  await ctx.send('Error: {} Please use `!help` to list available commands '.format(e) +
+  
+  await ctx.send('{}. \nPlease use `!help` to list available commands '.format(e) +
                  'and `!help <command>` to see the complete docstring.')
 
 

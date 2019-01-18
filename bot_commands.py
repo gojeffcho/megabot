@@ -4,6 +4,7 @@ from bot_utility import is_admin, is_mod, find_channel, find_role, \
                         match_role, send_notification, user_has_role
 
 import random
+from datetime import datetime, timedelta
 
 class User():
   def __init__(self, bot):
@@ -52,6 +53,10 @@ class User():
     Returns:
       None
     """
+    if not user_has_role(ctx.author, CONFIG['ConfirmedRole']):
+      await ctx.send('`!course`: You cannot use this command until you have agreed to the rules.')
+      return
+      
     if course not in CONFIG['CourseRoles']:
       await ctx.send("`!course`: `{}` is not an active course role.".format(course))
       return
@@ -97,6 +102,10 @@ class User():
     Returns:
       None
     """
+    if not user_has_role(ctx.author, CONFIG['ConfirmedRole']):
+      await ctx.send('`!invite`: You cannot use this command until you have agreed to the rules.')
+      return
+    
     user = discord_user.split('#')
     if not len(user) == 2:
       await ctx.send('`!invite`: You must enter the full Discord username ' +
@@ -108,10 +117,21 @@ class User():
                '(e.g. "Jeff Cho, 4th year CS student, in Game Dev ' +
                'Certificate program, <additional description>...").')
       return
+      
+    if not ctx.author.joined_at < datetime.now() - timedelta(days=14):
+      await ctx.send('`!invite`: You must have been on the Megachannel for at least two weeks to invite others.')
+      return
 
     admin_user = ctx.guild.owner
     await admin_user.send('{} has requested an invite for {}: {}'.format(
                                       ctx.author.display_name, discord_user, desc))
+    await ctx.author.send('You have requested an invite for {}. '.format(discord_user) + 
+        'If approved, you will get a PM with the link to use.\n\n' +
+        'Please remember that personality and fit are more important than convenience for server membership - ' +
+        'there is a lot of personal and private information shared here, and we maintain a culture of respect ' +
+        'and openness. Everyone must feel safe and comfortable.  The invited user is registered to you, and ' +
+        'you are ultimately responsible for their behavior.\n\n' +
+        'If you would like to retract your nomination, please send a DM to Jeff.')
 
 
   @commands.command()
@@ -175,6 +195,8 @@ class User():
       for role in ctx.author.roles:
         if role.name != '@everyone' and role.name != CONFIG['ConfirmedRole'] and role.name != CONFIG['ModRole']:
           await ctx.author.remove_roles(role)
+    else:
+      await ctx.send('`!reset`: You cannot use this command until you have agreed to the rules.')
 
     await ctx.author.send('Your permissions to the server have been reset. ' +
                           'Please add back any roles and courses you want on your profile.')
@@ -191,7 +213,10 @@ class User():
     Returns:
       None
     """
-
+    if not user_has_role(ctx.author, CONFIG['ConfirmedRole']):
+      await ctx.send('`!role`: You cannot use this command until you have agreed to the rules.')
+      return
+      
     if role == 'programmers':
       role = 'developers'
 
@@ -240,6 +265,10 @@ class User():
       result (Int)
       The result of rolling the dice.
     """
+    if not user_has_role(ctx.author, CONFIG['ConfirmedRole']):
+      await ctx.send('`!roll`: You cannot use this command until you have agreed to the rules.')
+      return
+      
     if not dice:
       await ctx.send('`!roll`: You have not specified the dice to roll.')
       return
@@ -294,6 +323,10 @@ class User():
     Returns:
       None
     """
+    if not user_has_role(ctx.author, CONFIG['ConfirmedRole']):
+      await ctx.send('`!whois`: You cannot use this command until you have agreed to the rules.')
+      return
+      
     target_role = match_role(ctx.guild, role_or_course)
     
     if not target_role:

@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 from bot_config import CONFIG
+from bot_database import conn, cursor, get_db_user
+from datetime import datetime
 from bot_utility import is_admin, is_mod, find_channel, \
                         find_role, send_notification, user_has_role
 
@@ -11,7 +13,7 @@ class Mod():
 
 
   @commands.command()
-  async def cap(self, ctx, mention):
+  async def cap(self, ctx, mention, *, reason='N/A'):
     """Mod command: Dunce cap a mentioned user.
 
     Args:
@@ -60,13 +62,36 @@ class Mod():
                                'be able to add reactions to other users\' messages. The offending ' +
                                'violation must be remediated, and your dunce cap will be removed ' +
                                'after a certain amount of time.')
-        await staff_channel.send('{} has been dunce capped by {}!'.format(
+        await staff_channel.send('{} has been dunce capped by {} for {}!'.format(
                                                                             target_user.mention,
-                                                                            ctx.author.mention))
+                                                                            ctx.author.mention,
+                                                                            reason))
         await notifications_channel.send('{} has been dunce capped by {}!'.format(
                                                                             target_user.display_name,
                                                                             ctx.author.display_name))
-        return
+        
+        user = get_db_user(conn, cursor, target_user)
+        
+        if not user:        
+          cmd = '''INSERT INTO users 
+                    VALUES (?, ?, 0, 0, 1)'''
+          params = (target_user.id, target_user.name)
+        
+        else:
+          cmd = '''UPDATE users 
+                    SET times_capped = ?
+                    WHERE id == ?'''
+          params = (user[4] + 1, target_user.id)
+
+        cursor.execute(cmd, params)
+        conn.commit()
+        
+        cmd = '''INSERT INTO notes
+                  VALUES (NULL, ?, ?, ?, ?, ?)'''
+        params = (datetime.now(), target_user.id, target_user.name, 'cap', reason)
+        cursor.execute(cmd, params)
+        conn.commit()
+
 
     # Non-moderator uses !cap
     else:

@@ -1,5 +1,6 @@
 from discord.ext import commands
 from bot_config import CONFIG
+from bot_database import conn, cursor, create_db_user, get_db_user
 from bot_utility import is_admin, is_mod, find_channel, find_role, \
                         match_role, send_notification, user_has_role
 
@@ -121,6 +122,17 @@ class User():
     if not ctx.author.joined_at < datetime.now() - timedelta(days=14):
       await ctx.send('`!invite`: You must have been on the Megachannel for at least two weeks to invite others.')
       return
+      
+    user = get_db_user(conn, cursor, ctx.author)
+    
+    if not user:
+      create_db_user(conn, cursor, ctx.author)
+    
+    cmd = '''INSERT INTO notes
+              VALUES (NULL, ?, ?, ?, 'invite', ?)'''
+    params = (datetime.now(), ctx.author.id, ctx.author.name, discord_user + ': ' + desc)
+    cursor.execute(cmd, params)
+    conn.commit()        
 
     admin_user = ctx.guild.owner
     await admin_user.send('{} has requested an invite for {}: {}'.format(
@@ -132,6 +144,8 @@ class User():
         'and openness. Everyone must feel safe and comfortable.  The invited user is registered to you, and ' +
         'you are ultimately responsible for their behavior.\n\n' +
         'If you would like to retract your nomination, please send a DM to Jeff.')
+    
+    
 
 
   @commands.command()

@@ -14,6 +14,45 @@ from bot_utility import is_admin, is_mod, find_channel, find_role, \
 class Admin():
   def __init__(self, bot):
     self.bot = bot
+    
+  
+  @commands.command()
+  async def crap(self, ctx, mention, *, reason='no reason'):
+    """Admin command: Crap a mentioned user.
+    
+    Args:
+      mention (User)
+        The user to crap.
+    
+    Returns:
+      None
+    """
+    if not is_admin(ctx.author):
+      await ctx.send('No.')
+      return
+    
+    if len(ctx.message.mentions) == 0:
+      await ctx.send("`!crap`: The user to be crapped must be @-mentioned as the first argument.")
+      return
+    
+    target_user = ctx.message.mentions[0]
+    crap_role = find_role(ctx.guild, CONFIG['CrapRole'])
+    notifications_channel = find_channel(ctx.guild, CONFIG['NotificationsChannel'])
+    
+    if not crap_role:
+      await ctx.send('`!crap`: There was an error attempting to crap {}.'.format(target_user.display_name))
+      return
+    
+    if user_has_role(target_user, CONFIG['CrapRole']):
+      await ctx.send('`!crap`: {} has been double-crapped!'.format(target_user.display_name))
+    
+    else:
+      await target_user.add_roles(crap_role)
+      await ctx.send('💩💩💩')
+      await notifications_channel.send('{} has been crapped for {}'.format(
+                                                                    target_user.display_name, 
+                                                                    reason))
+    
 
   @commands.command()
   async def echo(self, ctx, *, message):

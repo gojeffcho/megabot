@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from bot_config import CONFIG
-from bot_database import conn, cursor, get_db_user
+from bot_database import conn, cursor, create_db_user, get_db_user
 from datetime import datetime
 from bot_utility import is_admin, is_mod, find_channel, \
                         find_role, send_notification, user_has_role
@@ -52,7 +52,7 @@ class Mod():
     if is_admin(ctx.author) or is_mod(ctx.author):
 
       if user_has_role(target_user, CONFIG['CapRole']):
-        await ctx.send('`!cap`: {} is already capped!'.format(target_user.mention))
+        await ctx.send('`!cap`: {} is already capped!'.format(target_user.display_name))
 
       else:
         await target_user.add_roles(cap_role)

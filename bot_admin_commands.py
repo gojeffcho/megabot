@@ -125,7 +125,7 @@ class Admin():
       await ctx.send('`!stats`: This is an admin-only command.')
       return
       
-    if not range == 'month' or range == 'all':
+    if range != 'month' and range != 'all':
       await ctx.send('`!stats`: Range must be `month` or `all`.')
       return
       

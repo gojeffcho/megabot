@@ -317,12 +317,11 @@ class User():
 
   @commands.command()
   async def roll(self, ctx, dice):
-    """Roll a die in the format #d#.
+    """Roll a die in the format XdY[+Z].
 
     Args:
       dice (String)
-        String of format #d#, e.g. 3d6, to roll a d6 three times.
-        You may roll a maximum of 20 dice.
+        String of format <X>d<Y>[+Z], where Z is an optional modifier - e.g. 3d6, to roll a d6 three times, or 3d6+2. You may roll a maximum of 20 dice.
 
     Returns:
       result (Int)
@@ -343,13 +342,28 @@ class User():
       await ctx.send('`!roll`: Please check your dice syntax.')
       return
 
-    if not args[0].isdigit() or not args[1].isdigit():
+    if not args[0].isdigit():
       await ctx.send('`!roll`: Please check your dice syntax. It must be of the format #d#, e.g. `!roll 3d6`.')
       return
+    else:
+      num_dice = int(args[0])    
 
-    num_dice = int(args[0])
-    die_type = int(args[1])
+    dice_and_mods = args[1]
 
+    if '+' in dice_and_mods:
+      dice_and_mods = dice_and_mods.split('+')
+      
+      if not dice_and_mods[0].isdigit() or not dice_and_mods[1].isdigit():
+        await ctx.send('`!roll`: Please check your dice and modifier syntax.')
+        return
+      else: 
+        die_type = int(dice_and_mods[0])
+        mod = int(dice_and_mods[1])
+    
+    else:
+      die_type = int(dice_and_mods)
+      mod = 0
+    
     if num_dice > 20:
       await ctx.send('`!roll`: You can roll a maximum of 20 dice.')
       return
@@ -371,8 +385,10 @@ class User():
       roll = random.randint(1, die_type)
       rolls.append(roll)
       roll_total += roll
+    
+    roll_total += mod
 
-    await ctx.send('{} rolls {} and gets... {}\nRolls: {}'.format(ctx.author.mention, dice, roll_total, rolls))
+    await ctx.send('{} rolls {} and gets... {}\n\nRolls: {}\nMod: {}'.format(ctx.author.mention, dice, roll_total, rolls, mod))
 
 
   @commands.command()

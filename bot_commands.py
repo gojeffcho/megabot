@@ -44,10 +44,11 @@ class User():
 
 
   @commands.command()
-  async def claim(self, ctx):
+  async def claim(self, ctx, *, event):
     """Claim an event channel, if it is not previously claimed."""
 
     channel = ctx.message.channel
+
     if not CONFIG['EventChannelPrefix'] in channel.name:
       await ctx.send('`!claim`: This command can only be used in an event channel.')
       return
@@ -58,8 +59,12 @@ class User():
                      'event is finished.')
       return
 
+    if not event:
+      await ctx.send('`!claim`: You must specify the event and description for the claim.')
+      return
+
     await ctx.message.pin()
-    await ctx.send('{0} has claimed this event channel!'.format(ctx.author.display_name))
+    await ctx.send('{0} has claimed this event channel: {1}!'.format(ctx.author.display_name, event))
 
 
   @commands.command()
@@ -141,17 +146,17 @@ class User():
     if not ctx.author.joined_at < datetime.now() - timedelta(days=14):
       await ctx.send('`!invite`: You must have been on the Megachannel for at least two weeks to invite others.')
       return
-      
+
     user = get_db_user(conn, cursor, ctx.author)
-    
+
     if not user:
       create_db_user(conn, cursor, ctx.author)
-    
+
     cmd = '''INSERT INTO notes
               VALUES (NULL, ?, ?, ?, 'invite', ?)'''
     params = (datetime.now(), ctx.author.id, ctx.author.name, discord_user + ': ' + desc)
     cursor.execute(cmd, params)
-    conn.commit()        
+    conn.commit()
 
     admin_user = ctx.guild.owner
     await admin_user.send('{} has requested an invite for {}: {}'.format(
@@ -163,8 +168,8 @@ class User():
         'and openness. Everyone must feel safe and comfortable.  The invited user is registered to you, and ' +
         'you are ultimately responsible for their behavior.\n\n' +
         'If you would like to retract your nomination, please send a DM to Jeff.')
-    
-    
+
+
 
 
   @commands.command()
@@ -218,6 +223,31 @@ class User():
 
     else:
       await ctx.author.send('You must agree to the rules to view any profiles.')
+
+
+  @commands.command()
+  async def release(self, ctx):
+    """Claim an event channel, if it is not previously claimed."""
+
+    channel = ctx.message.channel
+
+    if not CONFIG['EventChannelPrefix'] in channel.name:
+      await ctx.send('`!release`: This command can only be used in an event channel.')
+      return
+
+    pins = await channel.pins()
+
+    if not pins:
+      await ctx.send('`!release`: This channel does not appear to have an active claim to release.')
+      return
+
+    if pins[0].author != ctx.author:
+      await ctx.send('`!release`: You do not appear to be the user who claimed this channel.')
+      return
+
+    await pins[0].unpin()
+    await ctx.send('{0} has released this event channel!  It is now open to be claimed for other events'.
+                format(ctx.author.display_name))
 
 
   @commands.command()

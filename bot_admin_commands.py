@@ -108,6 +108,42 @@ class Admin():
 
 
   @commands.command()
+  async def uncrap(self, ctx, mention):
+    """Admin command: Uncrap a mentioned user.
+    
+    Args:
+      mention (User)
+        The user to uncrap.
+    
+    Returns:
+      None
+    """
+    if not is_admin(ctx.author):
+      await ctx.send('Nope.')
+      return
+    
+    if len(ctx.message.mentions) == 0:
+      await ctx.send("`!uncrap`: The user to be uncrapped must be @-mentioned as the first argument.")
+      return
+    
+    target_user = ctx.message.mentions[0]
+    crap_role = find_role(ctx.guild, CONFIG['CrapRole'])
+    notifications_channel = find_channel(ctx.guild, CONFIG['NotificationsChannel'])
+    
+    if not crap_role:
+      await ctx.send('`!uncrap`: There was an error attempting to uncrap {}.'.format(target_user.display_name))
+      return
+    
+    if user_has_role(target_user, CONFIG['CrapRole']):
+      await target_user.remove_roles(crap_role)
+      await ctx.send('🚫💩')
+      await notifications_channel.send('{} has been uncrapped.'.format(target_user.display_name))
+    
+    else:
+      await ctx.send('`!uncrap`: {} doesn\'t appear to be crapped.'.format(target_user.display_name))
+                                                                    
+                                                                    
+  @commands.command()
   async def stats(self, ctx, num: int=5, range: str='month'):
     """Admin command: generate post stats.
     

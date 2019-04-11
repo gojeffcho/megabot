@@ -388,7 +388,7 @@ class User():
     
     roll_total += mod
 
-    await ctx.send('{} rolls {} and gets... {}\n\nRolls: {}\nMod: {}'.format(ctx.author.mention, dice, roll_total, rolls, mod))
+    await ctx.send('{} rolls {} and gets... {}!\n\nRolls: {}\nRaw: {}\nMod: {}'.format(ctx.author.mention, dice, roll_total, rolls, roll_total - mod, mod))
 
 
   @commands.command()

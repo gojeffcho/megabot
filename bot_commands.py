@@ -349,18 +349,25 @@ class User():
       num_dice = int(args[0])    
 
     dice_and_mods = args[1]
+    mod_type = 0
 
-    if '+' in dice_and_mods:
-      dice_and_mods = dice_and_mods.split('+')
+    if '+' in dice_and_mods or '-' in dice_and_mods:
+      if '+' in dice_and_mods:
+        dice_and_mods = dice_and_mods.split('+')
+    
+      elif '-' in dice_and_mods:
+        dice_and_mods = dice_and_mods.split('-')
+        mod_type = -1
       
       if not dice_and_mods[0].isdigit() or not dice_and_mods[1].isdigit():
         await ctx.send('`!roll`: Please check your dice and modifier syntax.')
         return
+        
       else: 
         die_type = int(dice_and_mods[0])
         mod = int(dice_and_mods[1])
-    
-    else:
+      
+    else:		
       die_type = int(dice_and_mods)
       mod = 0
     
@@ -386,9 +393,12 @@ class User():
       rolls.append(roll)
       roll_total += roll
     
-    roll_total += mod
+    if mod_type == -1:
+      total = roll_total - mod
+    else:
+      total = roll_total + mod
 
-    await ctx.send('{} rolls {} and gets... {}!\n\nRolls: {}\nRaw: {}\nMod: {}'.format(ctx.author.mention, dice, roll_total, rolls, roll_total - mod, mod))
+    await ctx.send('{} rolls {} and gets... {}!\n\nRolls: {}\nRaw: {}\nMod: {}{}'.format(ctx.author.mention, dice, total, rolls, roll_total, '-' if mod_type == -1 else '+', mod))
 
 
   @commands.command()

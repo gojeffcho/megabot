@@ -43,6 +43,25 @@ class User():
 
 
   @commands.command()
+  async def claim(self, ctx):
+    """Claim an event channel, if it is not previously claimed."""
+
+    channel = ctx.message.channel
+    if not CONFIG['EventChannelPrefix'] in channel.name:
+      await ctx.send('`!claim`: This command can only be used in an event channel.')
+      return
+
+    if await channel.pins():
+      await ctx.send('`!claim`: This channel appears to have an active claim. Please check the pinned ' +
+                     'messages and ask the person who claimed it to `!release` it if you believe their ' +
+                     'event is finished.')
+      return
+
+    await ctx.message.pin()
+    await ctx.send('{0} has claimed this event channel!'.format(ctx.author.display_name))
+
+
+  @commands.command()
   async def course(self, ctx, course):
     """Add a course role to yourself so you can be mentioned by the role.
 
@@ -56,7 +75,7 @@ class User():
     if not user_has_role(ctx.author, CONFIG['ConfirmedRole']):
       await ctx.send('`!course`: You cannot use this command until you have agreed to the rules.')
       return
-      
+
     if course not in CONFIG['CourseRoles']:
       await ctx.send("`!course`: `{}` is not an active course role.".format(course))
       return
@@ -105,7 +124,7 @@ class User():
     if not user_has_role(ctx.author, CONFIG['ConfirmedRole']):
       await ctx.send('`!invite`: You cannot use this command until you have agreed to the rules.')
       return
-    
+
     user = discord_user.split('#')
     if not len(user) == 2:
       await ctx.send('`!invite`: You must enter the full Discord username ' +
@@ -117,7 +136,7 @@ class User():
                '(e.g. "Jeff Cho, 4th year CS student, in Game Dev ' +
                'Certificate program, <additional description>...").')
       return
-      
+
     if not ctx.author.joined_at < datetime.now() - timedelta(days=14):
       await ctx.send('`!invite`: You must have been on the Megachannel for at least two weeks to invite others.')
       return
@@ -125,7 +144,7 @@ class User():
     admin_user = ctx.guild.owner
     await admin_user.send('{} has requested an invite for {}: {}'.format(
                                       ctx.author.display_name, discord_user, desc))
-    await ctx.author.send('You have requested an invite for {}. '.format(discord_user) + 
+    await ctx.author.send('You have requested an invite for {}. '.format(discord_user) +
         'If approved, you will get a PM with the link to use.\n\n' +
         'Please remember that personality and fit are more important than convenience for server membership - ' +
         'there is a lot of personal and private information shared here, and we maintain a culture of respect ' +
@@ -162,7 +181,7 @@ class User():
       None
     """
     print('Context: {}'.format(ctx))
-    
+
     if user_has_role(ctx.author, CONFIG['ConfirmedRole']):
       if len(ctx.message.mentions) < 1 or len(ctx.message.mentions) > 1:
         await ctx.author.send('`!profile`: You must mention one user whose profile you wish to look up.')
@@ -170,7 +189,7 @@ class User():
 
       target_user = ctx.message.mentions[0]
       print('User: {}'.format(target_user))
-    
+
       profiles_channel = find_channel(ctx.guild, CONFIG['ProfilesChannel'])
       profile = None
 
@@ -216,7 +235,7 @@ class User():
     if not user_has_role(ctx.author, CONFIG['ConfirmedRole']):
       await ctx.send('`!role`: You cannot use this command until you have agreed to the rules.')
       return
-      
+
     if role == 'programmers':
       role = 'developers'
 
@@ -258,7 +277,7 @@ class User():
 
     Args:
       dice (String)
-        String of format #d#, e.g. 3d6, to roll a d6 three times. 
+        String of format #d#, e.g. 3d6, to roll a d6 three times.
         You may roll a maximum of 20 dice.
 
     Returns:
@@ -268,7 +287,7 @@ class User():
     if not user_has_role(ctx.author, CONFIG['ConfirmedRole']):
       await ctx.send('`!roll`: You cannot use this command until you have agreed to the rules.')
       return
-      
+
     if not dice:
       await ctx.send('`!roll`: You have not specified the dice to roll.')
       return
@@ -286,7 +305,7 @@ class User():
 
     num_dice = int(args[0])
     die_type = int(args[1])
-    
+
     if num_dice > 20:
       await ctx.send('`!roll`: You can roll a maximum of 20 dice.')
       return
@@ -303,54 +322,54 @@ class User():
 
     roll_total = 0
     rolls    = []
-    
+
     for i in range(num_dice):
       roll = random.randint(1, die_type)
       rolls.append(roll)
       roll_total += roll
 
     await ctx.send('{} rolls {} and gets... {}\nRolls: {}'.format(ctx.author.mention, dice, roll_total, rolls))
-    
-    
+
+
   @commands.command()
   async def whois(self, ctx, role_or_course):
     """Look up who is in a course or role.
-    
+
     Args:
       role_or_course (String)
         The role or course from which to list current members.
-      
+
     Returns:
       None
     """
     if not user_has_role(ctx.author, CONFIG['ConfirmedRole']):
       await ctx.send('`!whois`: You cannot use this command until you have agreed to the rules.')
       return
-      
+
     target_role = match_role(ctx.guild, role_or_course)
-    
+
     if not target_role:
       await ctx.send('`!whois`: The role {} could not be found.'.format(role_or_course))
       return
-    
+
     role_is_gamedev = target_role.name in CONFIG['GameDevRoles']
     role_is_course = target_role.name in CONFIG['CourseRoles']
-    
+
     if not role_is_gamedev and not role_is_course:
       await ctx.send('`!whois`: This role is not eligible for lookup.')
       return
-    
+
     matches = []
-    
+
     for member in ctx.guild.members:
       if target_role in member.roles:
         matches.append(member)
-    
+
     match_string = ''
-    
+
     for member in matches:
       match_string += '\n * {}'.format(member.display_name)
-    
+
     await ctx.send('`!whois`: The members who are in {} are: {}'.format(
                                 target_role.name, match_string))
 

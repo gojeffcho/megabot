@@ -26,6 +26,7 @@ CONFIG['WelcomeChannel']        = 'welcome'
 CONFIG['ProfilesChannel']       = 'profiles'
 CONFIG['RulesChannel']          = 'rules'
 CONFIG['StaffChannel']          = 'staff'
+CONFIG['EventChannelPrefix']    = 'event'
 
 CONFIG['Dice'] = [2, 4, 6, 8, 10, 12, 20, 100, 1000]
 

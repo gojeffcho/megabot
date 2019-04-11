@@ -50,17 +50,18 @@ async def on_command_error(ctx, e):
 
   Returns:
     None
-  """  
+  """
   ignored = (sqlite3.OperationalError, sqlite3.IntegrityError, ValueError)
   if isinstance(e, ignored):
-    print('{}'.format(e))
+
+    print('{}'.format(error_string.replace('..', '.')))
     traceback.print_stack()
     return
-  
+
   if ctx.message.content == '!' or ctx.message.content[1] == '!':
     return
-  
-  
+
+
   await ctx.send('{}. \nPlease use `!help` to list available commands '.format(e) +
                  'and `!help <command>` to see the complete docstring.')
 

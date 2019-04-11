@@ -7,6 +7,26 @@ conn = sqlite3.connect(CONFIG['DatabaseFile'])
 cursor = conn.cursor()
 
 
+def create_db_user(conn, cursor, user):
+  """Create a user for the database.
+  
+  Args:
+    conn (sqlite3.Connection)
+  
+    cursor (sqlite3.Cursor)
+    
+    user (discord.Member)
+  
+  Returns:
+    None
+  """
+  cmd = '''INSERT INTO users 
+                VALUES (?, ?, 0, 0, 1)'''
+  params = (user.id, user.name)
+  cursor.execute(cmd, params)
+  conn.commit()    
+    
+
 def get_db_user(conn, cursor, user):
   """Check if a given user exists in the database.
   

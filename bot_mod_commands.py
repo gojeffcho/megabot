@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from bot_config import CONFIG
-from bot_database import conn, cursor, get_db_user
+from bot_database import conn, cursor, create_db_user, get_db_user
 from datetime import datetime
 from bot_utility import is_admin, is_mod, find_channel, \
                         find_role, send_notification, user_has_role
@@ -38,6 +38,7 @@ class Mod():
 
     # Attempt to cap the Admin
     if is_admin(target_user):
+      await ctx.author.add_roles(cap_role)
       await ctx.author.send('You have been dunce capped for attempting to dunce cap the admin. ' +
                             'While you are dunce capped, you will not be able to send messages, ' +
                             'but you will be able to add reactions to other users\' messages. ' +
@@ -52,7 +53,7 @@ class Mod():
     if is_admin(ctx.author) or is_mod(ctx.author):
 
       if user_has_role(target_user, CONFIG['CapRole']):
-        await ctx.send('`!cap`: {} is already capped!'.format(target_user.mention))
+        await ctx.send('`!cap`: {} is already capped!'.format(target_user.display_name))
 
       else:
         await target_user.add_roles(cap_role)
@@ -98,30 +99,30 @@ class Mod():
       await ctx.send('`!cap`: You are not worthy to wield the mighty cap.')
 
 
-    @commands.command()
-    async def setname(self, ctx, user, *, name):
-      """Mod command: change a user's nickname on this server.
+  @commands.command()
+  async def setname(self, ctx, user, *, name):
+    """Mod command: change a user's nickname on this server.
 
-      Args:
-        user (Member):
-          The user whose nickname will be updated.
+    Args:
+      user (Member):
+        The user whose nickname will be updated.
 
-        name (String):
-          String to which to set the user's nickname.
-      """
-      if is_admin(ctx.author) or is_mod(ctx.author):
+      name (String):
+        String to which to set the user's nickname.
+    """
+    if is_admin(ctx.author) or is_mod(ctx.author):
 
-        if len(ctx.message.mentions) == 0:
-          await ctx.send("`!setname`: The user whose name you wish to change must be mentioned as the first argument.")
-          return
+      if len(ctx.message.mentions) == 0:
+        await ctx.send("`!setname`: The user whose name you wish to change must be mentioned as the first argument.")
+        return
 
-        target_user = ctx.message.mentions[0]
-        old_name = target_user.display_name
-        await target_user.edit(nick=name)
-        await send_notification(ctx.guild, "{} updated {}'s nickname to {}!".format(ctx.author.display_name, old_name, name))
+      target_user = ctx.message.mentions[0]
+      old_name = target_user.display_name
+      await target_user.edit(nick=name)
+      await send_notification(ctx.guild, "{} updated {}'s nickname to {}!".format(ctx.author.display_name, old_name, name))
 
-      else:
-        await ctx.send("`!setname`: You do not have the privileges to use this command.")
+    else:
+      await ctx.send("`!setname`: You do not have the privileges to use this command.")
 
 
   @commands.command()

@@ -62,7 +62,7 @@ async def on_command_error(ctx, e):
     return
 
 
-  await ctx.send('{}. \nPlease use `!help` to list available commands '.format(e) +
+  await ctx.send('{} \n\nPlease use `!help` to list available commands '.format(e) +
                  'and `!help <command>` to see the complete docstring.')
 
 

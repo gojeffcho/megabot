@@ -5,6 +5,7 @@ from bot_utility import is_admin, is_mod, find_channel, find_role, \
                         match_role, send_notification, user_has_role
 
 import random
+from time import sleep
 from datetime import datetime, timedelta
 
 class User():
@@ -42,6 +43,23 @@ class User():
       await member.send('You have already agreed to the rules on this server.')
 
 
+
+  @commands.command()
+  async def ask(self, ctx, *, question):
+    """Ask the Magic 8-Ball a question.
+    
+    Args:
+      question (String)
+        The question you wish to ask the Magic 8-Ball.
+    """
+    if not user_has_role(ctx.author, CONFIG['ConfirmedRole']):
+      await ctx.send('`!ask`: You cannot use this command until you have agreed to the rules.')
+      return
+    
+    await ctx.send('{} asks the Magic 8-Ball:\n"{}"'.format(ctx.author.display_name, question))
+    sleep(3)
+    await ctx.send('The Magic 8-Ball answers: `{}`'.format(random.choice(CONFIG['8Ball'])))
+  
 
   @commands.command()
   async def claim(self, ctx, *, event):

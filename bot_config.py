@@ -34,7 +34,7 @@ CONFIG['Dice'] = [2, 4, 6, 8, 10, 12, 20, 100, 1000]
 CONFIG['8Ball'] = [
                     "It is certain.",
                     "It is decidedly so.",
-                    "Without a douby.",
+                    "Without a doubt.",
                     "Yes - definitely.",
                     "You may rely on it.",
                     "As I see it, yes.",

@@ -55,10 +55,25 @@ class User():
     if not user_has_role(ctx.author, CONFIG['ConfirmedRole']):
       await ctx.send('`!ask`: You cannot use this command until you have agreed to the rules.')
       return
+      
+    if not question:
+      await ctx.send('`!ask`: You must specify a question.')
+      return
     
-    await ctx.send('{} asks the Magic 8-Ball:\n"{}"'.format(ctx.author.display_name, question))
-    sleep(3)
-    await ctx.send('The Magic 8-Ball answers: `{}`'.format(random.choice(CONFIG['8Ball'])))
+    msg_txt = '{} asks the Magic 8-Ball:\n"{}"\n\n'.format(ctx.author.display_name, question)
+    
+    msg = await ctx.send(msg_txt)
+    
+    for i in range(3):
+      sleep(0.5)
+      msg_txt = msg_txt + '.'
+      await msg.edit(content=msg_txt)
+    
+    sleep(0.5)
+    
+    msg_txt = msg_txt + '\n\nThe Magic 8-Ball answers: `' + random.choice(CONFIG['8Ball']) + '`'
+    
+    await msg.edit(content=msg_txt)
   
 
   @commands.command()

@@ -275,8 +275,9 @@ class User():
       return
 
     if pins[0].author != ctx.author:
-      await ctx.send('`!release`: You do not appear to be the user who claimed this channel.')
-      return
+      if not is_admin(ctx.author) and is_mod(ctx.author):
+        await ctx.send('`!release`: You do not appear to be the user who claimed this channel.')
+        return
 
     await pins[0].unpin()
     await ctx.send('{0} has released this event channel!  It is now open to be claimed for other events'.

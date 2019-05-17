@@ -17,6 +17,66 @@ class Admin():
     
   
   @commands.command()
+  
+  async def addchannel(self, ctx, name, category):
+    """Admin command: Create a new channel with the correct permissions.
+    
+    Args:
+      name (String)
+        The name of the new channel.
+      
+      category(String)
+        The name of one of the existing categories to place the new channel in.
+    
+    Returns:
+      None
+    """
+    if not is_admin(ctx.author):
+      await ctx.send('`!addchannel`: Only admins may use this command.')
+      return
+    
+    if not name:
+      await ctx.send('`!addchannel`: You must specify a name for the new channel.')
+      return
+    
+    if not category:
+      await ctx.send('`!addchannel`: You must specify a category for the new channel.')
+      return
+      
+    channel_list = ctx.guild.text_channels
+    
+    for channel in channel_list:
+      if channel.name == name:
+        await ctx.send('`!addchannel`: A channel with this name already exists.')
+        return
+    
+    category_list = ctx.guild.categories
+    target_category = None
+    
+    for cat in category_list:
+      if cat.name == category:
+        target_category = cat
+    
+    if not target_category:
+      await ctx.send('`!addchannel`: This category could not be found.')
+      return
+        
+    new_channel = await ctx.guild.create_text_channel(name, 
+                                                      category=target_category)
+    
+    if not isinstance(new_channel, discord.TextChannel):
+      await ctx.send('`!addchannel`: Unable to add new channel.')
+    
+    cap_role = find_role(ctx.guild, CONFIG['CapRole'])
+    
+    await new_channel.set_permissions(cap_role, send_messages=False)
+    
+    if not new_channel.overwrites_for(cap_role):
+      await ctx.send('`!addchannel`: Cap role overwrite not effective.')
+    
+    await ctx.send('`!addchannel`: {} created in {}!'.format(name, category))
+  
+  
   async def crap(self, ctx, mention, *, reason='no reason'):
     """Admin command: Crap a mentioned user.
     

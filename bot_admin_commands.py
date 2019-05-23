@@ -234,7 +234,10 @@ class Admin():
     target_date = datetime.now() - timedelta(days=30)
     
     for channel in channels:
-      if isinstance(channel, discord.TextChannel):
+      if isinstance(channel, discord.TextChannel):      
+        if channel.category.name not in CONFIG['StatsCategories']:
+          continue
+      
         if range == 'all':
           async for post in channel.history(limit=None):
             count[post.author] += 1

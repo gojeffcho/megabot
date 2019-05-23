@@ -29,6 +29,14 @@ CONFIG['RulesChannel']          = 'rules'
 CONFIG['StaffChannel']          = 'staff'
 CONFIG['EventChannelPrefix']    = 'event'
 
+CONFIG['StatsCategories'] =   [ 'Administration',
+                                'Chat',
+                                'Courses',
+                                'Community',
+                                'Event Channels',
+                                'Archived Channels'
+                              ]
+
 CONFIG['Dice'] = [2, 4, 6, 8, 10, 12, 20, 100, 1000]
 
 CONFIG['8Ball'] = [

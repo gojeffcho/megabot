@@ -1,10 +1,8 @@
 
 current_courses = [ 'cmput-250',
-                    'cmput-301',
-                    'cmput-302',
-                    'intd-350',
-                    'intd-450',
-                    'mlcs-499'
+#                     'intd-350',
+#                     'intd-450',
+#                     'mlcs-499'
                   ]
 
 CONFIG = {}
@@ -61,6 +59,20 @@ CONFIG['8Ball'] = [
                     "Outlook not so good.",
                     "Very doubtful."
                   ]
+
+CONFIG['EmotePath'] = 'http://megachannel.jeffcho.com/emotes/'
+CONFIG['Emotes'] =  {
+                      'brogurt': 'brogurt.png',
+                      'david': 'david.png',
+                      'divad': 'divad.png',
+                      'flosiy': 'flosiy.png',
+                      'haay': 'haay.jpg',
+                      'lmaoest': 'lmaoest.png',
+                      'osiy': 'osiy.png',
+                      'questionmark': 'questionmark.png',
+                      'what': 'what.png',
+                      'yikers': 'yikers.png',
+                    }                
 
 CONFIG['DATA']            = {}
 CONFIG['DATA']['monitor'] = []

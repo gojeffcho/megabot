@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 from bot_config import CONFIG
 from bot_database import conn, cursor, create_db_user, get_db_user
@@ -144,6 +145,49 @@ class User():
 
     await ctx.author.send('The current courses you can add are: ' + course_list)
 
+
+  @commands.command()
+  async def emote(self, ctx, emote):
+    """Send an emote.
+    
+    Args:
+      emote (String)
+        The name of the emote you wish to send.
+    """
+    if not user_has_role(ctx.author, CONFIG['ConfirmedRole']):
+      await ctx.send('`!emote`: You cannot use this command until you have agreed to the rules.')
+      return
+      
+    if not emote:
+      await ctx.send('`!emote`: You must specify the emote you wish to send.')
+      return
+    
+    if emote not in list(CONFIG['Emotes'].keys()):
+      await ctx.send('`!emote`: This emote is not recognized.  Use `!emotes` to see the current list of emotes.')
+      return
+      
+    emote_file = CONFIG['EmotePath'] + CONFIG['Emotes'][emote]
+    emote_embed = discord.Embed(type='rich')
+    emote_embed.set_image(url=emote_file)
+    
+    await ctx.send(content=None, embed=emote_embed)
+    return
+
+
+  @commands.command()
+  async def emotes(self, ctx):
+    """See the current list of emotes for the !emote command."""
+    
+    emotes = list(CONFIG['Emotes'].keys())
+    emotes.sort()
+    outstring = 'Emotes:\n'
+    
+    for emote in emotes:
+      outstring += ' * ' + emote + '\n'
+    
+    await ctx.send(outstring)
+    return
+    
 
   @commands.command()
   async def invite(self, ctx, discord_user, *, desc):

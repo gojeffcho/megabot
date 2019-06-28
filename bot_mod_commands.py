@@ -7,7 +7,7 @@ from bot_utility import is_admin, is_mod, find_channel, \
                         find_role, send_notification, user_has_role
 
 
-class Mod():
+class Mod(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
 

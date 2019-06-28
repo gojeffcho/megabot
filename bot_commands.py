@@ -9,7 +9,7 @@ import random
 from time import sleep
 from datetime import datetime, timedelta
 
-class User():
+class User(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
 
@@ -345,7 +345,7 @@ class User():
 
   @commands.command()
   async def role(self, ctx, role):
-    """Add a game development role to yourself so you can be mentioned by the role.
+    """Add a role to yourself so you can be mentioned by the role.
 
     Args:
       role (String)
@@ -361,24 +361,23 @@ class User():
     if role == 'programmers':
       role = 'developers'
 
-    if role not in CONFIG['GameDevRoles']:
-      await ctx.send("`!role`: `{}` is not an active game development role.".format(role))
+    if role not in CONFIG['Roles']:
+      await ctx.send("`!role`: `{}` is not an active role.".format(role))
       return
 
-    gamedev_role = find_role(ctx.guild, role)
-    if not gamedev_role:
+    target_role = find_role(ctx.guild, role)
+    if not target_role:
       await ctx.send("`!role`: `{}` could not be found. Please check the spelling and punctuation.".format(role))
+      return
 
-    if gamedev_role in ctx.author.roles:
-      await ctx.author.remove_roles(gamedev_role)
+    if target_role in ctx.author.roles:
+      await ctx.author.remove_roles(target_role)
       await send_notification(ctx.guild, "{} has removed themselves from `{}`.".format(
-                                                      ctx.author.mention, gamedev_role))
+                                                      ctx.author.mention, target_role))
     else:
-      await ctx.author.add_roles(gamedev_role)
-      await send_notification(ctx.guild, "{} has added themselves to `{}`.".format(
-                                                  ctx.author.mention, gamedev_role))
-      await ctx.author.send('The {0} role was added. You will now be notified '.format(gamedev_role) +
-                            'when someone mentions `@{0}`.'.format(gamedev_role))
+      await ctx.author.add_roles(target_role)
+      await send_notification(ctx.guild, "{} has added themselves to `{}`.".format(ctx.author.mention, target_role))
+      await ctx.author.send('The {0} role was added. You will now be notified '.format(target_role) + 'when someone mentions `@{0}`.'.format(target_role))
 
 
   @commands.command()
@@ -387,7 +386,7 @@ class User():
 
     role_list = ''
 
-    for role in CONFIG['GameDevRoles']:
+    for role in CONFIG['DevRoles']:
       role_list += '\n  * `{}`'.format(role)
 
     await ctx.author.send('The current roles you can add are: ' + role_list)
@@ -500,7 +499,7 @@ class User():
       await ctx.send('`!whois`: The role {} could not be found.'.format(role_or_course))
       return
 
-    role_is_gamedev = target_role.name in CONFIG['GameDevRoles']
+    role_is_gamedev = target_role.name in CONFIG['Roles']
     role_is_course = target_role.name in CONFIG['CourseRoles']
 
     if not role_is_gamedev and not role_is_course:

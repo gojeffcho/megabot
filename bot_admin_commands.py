@@ -11,7 +11,7 @@ from bot_utility import is_admin, is_mod, find_channel, find_role, \
                         save_data, send_notification, user_has_role
 
 
-class Admin():
+class Admin(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
     

@@ -9,8 +9,9 @@ CONFIG = {}
 
 CONFIG['Prefix'] = ('!')
 
-CONFIG['GameDevRoles']  = [ 'artists', 'directors', 'developers',
-                            'musicians', 'producers', 'writers']
+CONFIG['Roles']         = [ 'artists', 'directors', 'developers',
+                            'musicians', 'producers', 'writers',
+                            'megarealm']
 CONFIG['CourseRoles']   = [ 'cmput-general', 'gamedev-general' ] + current_courses
 
 CONFIG['AdminRole']     = 'Daddy'
@@ -62,18 +63,26 @@ CONFIG['8Ball'] = [
 
 CONFIG['EmotePath'] = 'http://megachannel.jeffcho.com/emotes/'
 CONFIG['Emotes'] =  {
+                      'awoo': 'awoo.gif',
                       'brogurt': 'brogurt.png',
                       'catface': 'catface.png',
                       'david': 'david.png',
                       'divad': 'divad.png',
+                      'dogface': 'dogface.gif',
+                      'eyebrows': 'eyebrows.gif',
                       'flosiy': 'flosiy.png',
+                      'gobsmacked': 'gobsmacked.jpg',
+                      'gottem': 'gottem.gif',
                       'haay': 'haay.jpg',
+                      'heartface': 'heartface.jpg',
                       'lmaoest': 'lmaoest.png',
+                      'lub': 'lub.png',
                       'osiy': 'osiy.png',
                       'regret': 'regret.png',
                       'questionmark': 'questionmark.png',
                       'what': 'what.png',
                       'yikers': 'yikers.png',
+                      'weeb': 'weeb.png',
                       'wonderwall': 'wonderwall.png',
                     }                
 

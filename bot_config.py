@@ -84,7 +84,11 @@ CONFIG['Emotes'] =  {
                       'yikers': 'yikers.png',
                       'weeb': 'weeb.png',
                       'wonderwall': 'wonderwall.png',
-                    }                
+                    }
+
+CONFIG['SpecialEmotes'] = {
+                      'whoa': 'whoa.gif',
+                    }
 
 CONFIG['DATA']            = {}
 CONFIG['DATA']['monitor'] = []

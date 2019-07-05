@@ -162,11 +162,15 @@ class User(commands.Cog):
       await ctx.send('`!emote`: You must specify the emote you wish to send.')
       return
     
-    if emote not in list(CONFIG['Emotes'].keys()):
+    emotes = CONFIG['Emotes'].copy()
+    if user_has_role(ctx.author, CONFIG['AdminRole']):
+      emotes.update(CONFIG['SpecialEmotes'])
+    
+    if emote not in emotes.keys():
       await ctx.send('`!emote`: This emote is not recognized.  Use `!emotes` to see the current list of emotes.')
       return
       
-    emote_file = CONFIG['EmotePath'] + CONFIG['Emotes'][emote]
+    emote_file = CONFIG['EmotePath'] + emotes[emote]
     emote_embed = discord.Embed(type='rich')
     emote_embed.set_image(url=emote_file)
     
@@ -179,6 +183,8 @@ class User(commands.Cog):
     """See the current list of emotes for the !emote command."""
     
     emotes = list(CONFIG['Emotes'].keys())
+    if user_has_role(ctx.author, CONFIG['AdminRole']):
+      emotes += list(CONFIG['SpecialEmotes'].keys())
     emotes.sort()
     outstring = 'Emotes:\n'
     

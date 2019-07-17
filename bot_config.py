@@ -16,6 +16,7 @@ CONFIG['CourseRoles']   = [ 'cmput-general', 'gamedev-general' ] + current_cours
 
 CONFIG['AdminRole']     = 'Daddy'
 CONFIG['ModRole']       = 'Sugar Babies'
+CONFIG['SupporterRole'] = 'Supporter'
 CONFIG['CapRole']       = 'Dunce Cap'
 CONFIG['CrapRole']      = '💩💩💩'
 CONFIG['NewRole']       = 'new'

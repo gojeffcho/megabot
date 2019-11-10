@@ -171,6 +171,46 @@ class Admin(commands.Cog):
 
 
   @commands.command()
+  async def prune(self, ctx, exec=False):
+    """Admin command: prune users
+    
+    Arg:
+      exec (Bool): whether or not to execute pruning
+    
+    Return:
+      None
+    """
+    if not is_admin(ctx.author):
+      await ctx.send('`!prune`: Only admins may use this command.')
+      return
+
+    await ctx.send('Generating list of users who have not posted in a month...')
+
+    month_ago = datetime.now() - timedelta(days=30)
+    count = Counter()
+    
+    for channel in ctx.guild.channels:
+      if isinstance(channel, discord.TextChannel):      
+        async for post in channel.history(limit=None, after=month_ago):
+          count[post.author] += 1
+      
+    prune_list = []
+    to_prune = ''
+        
+    for member in ctx.guild.members:
+      if not count[member] and not member.id in CONFIG['PruneProtect']:
+        prune_list.append(member)
+        to_prune += '{} [{}]\n'.format(member.display_name, member.name)
+    
+    await ctx.send('{} users to be pruned:\n{}'.format(len(prune_list), to_prune))
+    
+    if exec:
+      pass
+    
+    return      
+
+
+  @commands.command()
   async def uncrap(self, ctx, mention):
     """Admin command: Uncrap a mentioned user.
     
@@ -182,9 +222,9 @@ class Admin(commands.Cog):
       None
     """
     if not is_admin(ctx.author):
-      if ctx.author.id == 269214028209848321:
-        pass  
-      else:
+#       if ctx.author.id == 269214028209848321:
+#         pass  
+#       else:
         await ctx.send('Nope.')
         return
     

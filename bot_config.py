@@ -1,5 +1,8 @@
 
 current_courses = [ 'cmput-250',
+                    'cmput-355',
+                    'cmput-397',
+                    'cmput-497'
 #                     'intd-350',
 #                     'intd-450',
 #                     'mlcs-499'
@@ -90,6 +93,13 @@ CONFIG['Emotes'] =  {
 CONFIG['SpecialEmotes'] = {
                       'whoa': 'whoa.gif',
                     }
+
+CONFIG['PruneProtect']  = [
+                            216303189073461248, # Patreon Bot
+                            178357404537323520, # Titus
+                            500722117772574732, # Isael
+                            245317937353719809  # Kieter
+                          ]
 
 CONFIG['DATA']            = {}
 CONFIG['DATA']['monitor'] = []

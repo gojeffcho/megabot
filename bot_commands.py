@@ -392,8 +392,11 @@ class User(commands.Cog):
 
     role_list = ''
 
-    for role in CONFIG['DevRoles']:
+    for role in CONFIG['Roles']:
       role_list += '\n  * `{}`'.format(role)
+    
+    for role in CONFIG['CourseRoles']:
+      role_list += '\n * `{}`'.format(role)
 
     await ctx.author.send('The current roles you can add are: ' + role_list)
 

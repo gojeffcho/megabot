@@ -171,10 +171,11 @@ class Admin(commands.Cog):
 
 
   @commands.command()
-  async def prune(self, ctx, exec=False):
+  async def prune(self, ctx, limit=90, exec=False):
     """Admin command: prune users
     
     Arg:
+      limit (Int): number of days of inactivity for pruning
       exec (Bool): whether or not to execute pruning
     
     Return:
@@ -184,9 +185,9 @@ class Admin(commands.Cog):
       await ctx.send('`!prune`: Only admins may use this command.')
       return
 
-    await ctx.send('Generating list of users who have not posted in a month...')
+    await ctx.send('Generating list of users who have not posted in {} days...'.format(limit))
 
-    month_ago = datetime.now() - timedelta(days=30)
+    month_ago = datetime.now() - timedelta(days=limit)
     count = Counter()
     
     for channel in ctx.guild.channels:
